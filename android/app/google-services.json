@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "73242177200",
+    "project_id": "kalorilaskuri-b71e0",
+    "storage_bucket": "kalorilaskuri-b71e0.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:73242177200:android:f8c83d3783d80abd975575",
+        "android_client_info": {
+          "package_name": "com.example.kalorilaskuri"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCAlYaf5Pa_Zuh27uwwpPYyVjt9mnCQkxc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
