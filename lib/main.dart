@@ -1,6 +1,8 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:kalorilaskuri/db/db_util.dart';
+import 'package:kalorilaskuri/db/firestore_util.dart';
+import 'package:kalorilaskuri/db/meal.dart';
+import 'package:kalorilaskuri/db/sqflite_util.dart';
 import 'package:kalorilaskuri/firebase_options.dart';
 
 void main() async {
@@ -62,8 +64,16 @@ class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
 
   void _incrementCounter() async {
-    final calors = await DbUtil().read();
-    print(calors);
+    Meal meal = Meal(
+      name: 'Pasta',
+      calories: 250,
+      createdAt: DateTime.now().toIso8601String(),
+    );
+    final sqfliteUtil = SqfliteUtil();
+
+    await sqfliteUtil.insertMeal(meal);
+    final meals = await sqfliteUtil.getMeals();
+    print(meals);
     setState(() {
       // This call to setState tells the Flutter framework that something has
       // changed in this State, which causes it to rerun the build method below

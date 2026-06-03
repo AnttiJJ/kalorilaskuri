@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class DbUtil {
+class FirestoreUtil {
   static final db = FirebaseFirestore.instance;
 
   Future<String> read() async {
