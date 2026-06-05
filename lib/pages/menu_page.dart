@@ -16,7 +16,7 @@ class MenuPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return ListView(
       children: [
-        ListTile(leading: Icon(Icons.calendar_month), title: Text('Kalenteri')),
+        ListTile(leading: Icon(Icons.menu_book), title: Text('Ruokalista')),
         ListTile(
           contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
           leading: Icon(Icons.person),

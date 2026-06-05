@@ -4,7 +4,7 @@ import 'package:kalorilaskuri/db/meal.dart';
 import 'package:kalorilaskuri/db/sqflite_util.dart';
 import 'package:kalorilaskuri/firebase_options.dart';
 import 'package:kalorilaskuri/notifiers.dart';
-import 'package:kalorilaskuri/pages/home_page.dart';
+import 'package:kalorilaskuri/pages/calories_page.dart';
 import 'package:kalorilaskuri/pages/meals_page.dart';
 import 'package:kalorilaskuri/pages/menu_page.dart';
 import 'package:kalorilaskuri/pages/user_select_page.dart';
@@ -46,8 +46,8 @@ class _MyHomePageState extends State<MyHomePage> {
   int _selectedIndex = 0;
 
   static const List<Widget> _pages = <Widget>[
-    HomePage(),
     MealsPage(),
+    CaloriesPage(),
     MenuPage(),
   ];
 
@@ -61,13 +61,13 @@ class _MyHomePageState extends State<MyHomePage> {
     Meal meal = Meal(
       name: 'Pasta',
       calories: 250,
+      type: 'Ateria',
       createdAt: DateTime.now().toIso8601String(),
     );
     final sqfliteUtil = SqfliteUtil();
 
     await sqfliteUtil.insertMeal(meal);
     final meals = await sqfliteUtil.getMeals();
-    print(meals);
     setState(() {});
   }
 
@@ -84,10 +84,13 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
             bottomNavigationBar: BottomNavigationBar(
               items: const <BottomNavigationBarItem>[
-                BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Koti'),
                 BottomNavigationBarItem(
-                  icon: Icon(Icons.food_bank),
-                  label: 'Ruoat',
+                  icon: Icon(Icons.restaurant),
+                  label: 'Ateriat',
+                ),
+                BottomNavigationBarItem(
+                  icon: Icon(Icons.bolt),
+                  label: 'Kalorit',
                 ),
                 BottomNavigationBarItem(
                   icon: Icon(Icons.menu),
@@ -98,11 +101,6 @@ class _MyHomePageState extends State<MyHomePage> {
               onTap: _onItemTapped,
             ),
             body: _pages[_selectedIndex],
-            floatingActionButton: FloatingActionButton(
-              onPressed: _incrementCounter,
-              tooltip: 'Increment',
-              child: const Icon(Icons.add),
-            ),
           );
         }
         return Scaffold(body: UserSelectPage());

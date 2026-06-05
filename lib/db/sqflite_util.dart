@@ -12,7 +12,7 @@ class SqfliteUtil {
       join(await getDatabasesPath(), 'kalorilaskuri_database.db'),
       onCreate: (db, version) {
         return db.execute(
-          'CREATE TABLE meals(id INTEGER PRIMARY KEY, name TEXT, calories INTEGER, created_at TEXT NOT NULL)',
+          'CREATE TABLE meals(id INTEGER PRIMARY KEY, name TEXT NOT NULL, calories INTEGER NOT NULL, type TEXT NOT NULL, weight INTEGER, size TEXT, amount INTEGER, created_at TEXT NOT NULL)',
         );
       },
       version: 1,
@@ -41,10 +41,23 @@ class SqfliteUtil {
             'id': id as int,
             'name': name as String,
             'calories': calories as int,
+            'type': type as String,
+            'weight': weight as int,
+            'size': size as String,
+            'amount': amount as int,
             'created_at': createdAt as String,
           }
           in mealMaps)
-        Meal(id: id, name: name, calories: calories, createdAt: createdAt),
+        Meal(
+          id: id,
+          name: name,
+          calories: calories,
+          type: type,
+          weight: weight,
+          size: size,
+          amount: amount,
+          createdAt: createdAt,
+        ),
     ];
   }
 }
