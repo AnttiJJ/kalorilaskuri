@@ -14,23 +14,55 @@ class MealsPage extends StatefulWidget {
 class _MealsPageState extends State<MealsPage> {
   final SqfliteUtil sqfliteUtil = SqfliteUtil();
 
-  //List<Meal>? meals;
   DateTime date = DateTime.now();
   bool loading = true;
 
   @override
   void initState() {
-    //loadMeals();
     super.initState();
   }
 
   Future<void> loadMeals() async {
     final SqfliteUtil sqfliteUtil = SqfliteUtil();
-
-    //meals = await sqfliteUtil.getMeals();
     setState(() {
       loading = false;
     });
+  }
+
+  Future<void> deleteMeal(int id, String name) async {
+    final confirmDelete = await showDialog<bool>(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Poista ateria'),
+          content: Text('Haluatko varmasti poistaa $name aterian'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context, false);
+              },
+              child: const Text('Peruuta'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context, true);
+              },
+              child: const Text('Poista'),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (confirmDelete == true) {
+      try {
+        final SqfliteUtil sqfliteUtil = SqfliteUtil();
+        await sqfliteUtil.deleteMeal(id);
+        setState(() {});
+      } catch (e) {
+        print(e);
+      }
+    }
   }
 
   Future<void> _selectDate() async {
@@ -85,16 +117,6 @@ class _MealsPageState extends State<MealsPage> {
               ),
             ],
           ),
-          //if (loading) const Center(child: CircularProgressIndicator()),
-          //if (!loading && meals == null)
-          //const Center(child: Text('Ei aterioita')),
-          //if (!loading && meals != null)
-          // ListView.builder(
-          //   itemCount: meals!.length,
-          //   itemBuilder: (context, index) {
-          //     return ListTile(title: Text(meals![index].name));
-          //   },
-          // ),
           Expanded(
             child: FutureBuilder<List<Meal>>(
               future: sqfliteUtil.getMeals(),
@@ -108,7 +130,27 @@ class _MealsPageState extends State<MealsPage> {
                 return ListView.builder(
                   itemCount: meals.length,
                   itemBuilder: (context, index) {
-                    return ListTile(title: Text(meals[index].name));
+                    return Card(
+                      child: ListTile(
+                        title: Text(meals[index].name),
+                        leading: meals[index].icon,
+                        trailing: IconButton(
+                          onPressed: () =>
+                              deleteMeal(meals[index].id!, meals[index].name),
+                          icon: Icon(Icons.delete, color: Colors.red),
+                        ),
+                        subtitle: Row(
+                          children: [
+                            Expanded(
+                              child: Text(
+                                'Kalorit: ${meals[index].calories.toString()}',
+                              ),
+                            ),
+                            Expanded(child: Text(meals[index].mealSize)),
+                          ],
+                        ),
+                      ),
+                    );
                   },
                 );
               },
@@ -117,11 +159,12 @@ class _MealsPageState extends State<MealsPage> {
         ],
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.push(
+        onPressed: () async {
+          await Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => const AddMealPage()),
           );
+          setState(() {});
         },
         tooltip: 'Lisää ateria',
         child: const Icon(Icons.add),

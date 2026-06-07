@@ -52,6 +52,9 @@ class _AddMealPageState extends State<AddMealPage> {
     try {
       final SqfliteUtil sqfliteUtil = SqfliteUtil();
       await sqfliteUtil.insertMeal(meal);
+
+      if (!mounted) return;
+      Navigator.pop(context);
     } catch (e) {
       print(e);
       return;

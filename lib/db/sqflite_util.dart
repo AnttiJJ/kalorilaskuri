@@ -60,4 +60,10 @@ class SqfliteUtil {
         ),
     ];
   }
+
+  Future<void> deleteMeal(int id) async {
+    final db = await database;
+
+    await db.delete('meals', where: 'id = ?', whereArgs: [id]);
+  }
 }

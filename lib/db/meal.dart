@@ -1,3 +1,5 @@
+import 'package:flutter/material.dart';
+
 class Meal {
   final int? id;
   final String name;
@@ -30,5 +32,26 @@ class Meal {
       'amount': amount,
       'created_at': createdAt,
     };
+  }
+
+  Icon get icon {
+    switch (type) {
+      case 'Välipala':
+        return Icon(Icons.apple, color: Colors.orange[300]);
+      case 'Herkku':
+        return Icon(Icons.cake, color: Colors.red[300]);
+      default:
+        return Icon(Icons.restaurant_menu, color: Colors.green[300]);
+    }
+  }
+
+  String get mealSize {
+    if (size != null) {
+      return 'Koko: $size';
+    } else if (amount != null) {
+      return 'Määrä: $amount kpl';
+    } else {
+      return 'Paino: $weight g';
+    }
   }
 }
