@@ -42,9 +42,9 @@ class SqfliteUtil {
             'name': name as String,
             'calories': calories as int,
             'type': type as String,
-            'weight': weight as int,
-            'size': size as String,
-            'amount': amount as int,
+            'weight': weight as int?,
+            'size': size as String?,
+            'amount': amount as int?,
             'created_at': createdAt as String,
           }
           in mealMaps)

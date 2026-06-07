@@ -1,4 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:kalorilaskuri/db/meal.dart';
+import 'package:kalorilaskuri/db/sqflite_util.dart';
+import 'package:kalorilaskuri/pages/add_meal_page.dart';
 import 'package:kalorilaskuri/utils/extensions.dart';
 
 class MealsPage extends StatefulWidget {
@@ -9,9 +12,26 @@ class MealsPage extends StatefulWidget {
 }
 
 class _MealsPageState extends State<MealsPage> {
-  DateTime date = DateTime.now();
+  final SqfliteUtil sqfliteUtil = SqfliteUtil();
 
-  void _addNewMeal() {}
+  //List<Meal>? meals;
+  DateTime date = DateTime.now();
+  bool loading = true;
+
+  @override
+  void initState() {
+    //loadMeals();
+    super.initState();
+  }
+
+  Future<void> loadMeals() async {
+    final SqfliteUtil sqfliteUtil = SqfliteUtil();
+
+    //meals = await sqfliteUtil.getMeals();
+    setState(() {
+      loading = false;
+    });
+  }
 
   Future<void> _selectDate() async {
     final DateTime? selectedDate = await showDatePicker(
@@ -65,10 +85,44 @@ class _MealsPageState extends State<MealsPage> {
               ),
             ],
           ),
+          //if (loading) const Center(child: CircularProgressIndicator()),
+          //if (!loading && meals == null)
+          //const Center(child: Text('Ei aterioita')),
+          //if (!loading && meals != null)
+          // ListView.builder(
+          //   itemCount: meals!.length,
+          //   itemBuilder: (context, index) {
+          //     return ListTile(title: Text(meals![index].name));
+          //   },
+          // ),
+          Expanded(
+            child: FutureBuilder<List<Meal>>(
+              future: sqfliteUtil.getMeals(),
+              builder: (context, snapshot) {
+                if (!snapshot.hasData) {
+                  return const CircularProgressIndicator();
+                }
+
+                final meals = snapshot.data!;
+
+                return ListView.builder(
+                  itemCount: meals.length,
+                  itemBuilder: (context, index) {
+                    return ListTile(title: Text(meals[index].name));
+                  },
+                );
+              },
+            ),
+          ),
         ],
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: _addNewMeal,
+        onPressed: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const AddMealPage()),
+          );
+        },
         tooltip: 'Lisää ateria',
         child: const Icon(Icons.add),
       ),
