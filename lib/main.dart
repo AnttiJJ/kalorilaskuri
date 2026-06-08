@@ -1,7 +1,5 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:kalorilaskuri/db/meal.dart';
-import 'package:kalorilaskuri/db/sqflite_util.dart';
 import 'package:kalorilaskuri/firebase_options.dart';
 import 'package:kalorilaskuri/notifiers.dart';
 import 'package:kalorilaskuri/pages/calories_page.dart';
@@ -55,20 +53,6 @@ class _MyHomePageState extends State<MyHomePage> {
     setState(() {
       _selectedIndex = index;
     });
-  }
-
-  void _incrementCounter() async {
-    Meal meal = Meal(
-      name: 'Pasta',
-      calories: 250,
-      type: 'Ateria',
-      createdAt: DateTime.now().toIso8601String(),
-    );
-    final sqfliteUtil = SqfliteUtil();
-
-    await sqfliteUtil.insertMeal(meal);
-    final meals = await sqfliteUtil.getMeals();
-    setState(() {});
   }
 
   @override

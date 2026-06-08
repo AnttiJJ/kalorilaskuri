@@ -22,14 +22,13 @@ class _MealsPageState extends State<MealsPage> {
     super.initState();
   }
 
-  Future<void> loadMeals() async {
-    final SqfliteUtil sqfliteUtil = SqfliteUtil();
-    setState(() {
-      loading = false;
-    });
-  }
-
-  Future<void> deleteMeal(int id, String name) async {
+  Future<void> deleteMeal(
+    int id,
+    String name,
+    int calories,
+    String type,
+    DateTime datetime,
+  ) async {
     final confirmDelete = await showDialog<bool>(
       context: context,
       builder: (context) {
@@ -57,7 +56,7 @@ class _MealsPageState extends State<MealsPage> {
     if (confirmDelete == true) {
       try {
         final SqfliteUtil sqfliteUtil = SqfliteUtil();
-        await sqfliteUtil.deleteMeal(id);
+        await sqfliteUtil.deleteMeal(id, calories, type, datetime);
         setState(() {});
       } catch (e) {
         print(e);
@@ -135,8 +134,13 @@ class _MealsPageState extends State<MealsPage> {
                         title: Text(meals[index].name),
                         leading: meals[index].icon,
                         trailing: IconButton(
-                          onPressed: () =>
-                              deleteMeal(meals[index].id!, meals[index].name),
+                          onPressed: () => deleteMeal(
+                            meals[index].id!,
+                            meals[index].name,
+                            meals[index].calories,
+                            meals[index].type,
+                            DateTime.parse(meals[index].createdAt),
+                          ),
                           icon: Icon(Icons.delete, color: Colors.red),
                         ),
                         subtitle: Row(

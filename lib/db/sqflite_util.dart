@@ -1,3 +1,4 @@
+import 'package:kalorilaskuri/db/firestore_util.dart';
 import 'package:kalorilaskuri/db/meal.dart';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
@@ -61,9 +62,21 @@ class SqfliteUtil {
     ];
   }
 
-  Future<void> deleteMeal(int id) async {
-    final db = await database;
+  Future<void> deleteMeal(
+    int id,
+    int calories,
+    String type,
+    DateTime datetime,
+  ) async {
+    try {
+      final db = await database;
+      final FirestoreUtil firestoreUtil = FirestoreUtil();
 
-    await db.delete('meals', where: 'id = ?', whereArgs: [id]);
+      await firestoreUtil.removeCalories(calories, type, datetime);
+
+      await db.delete('meals', where: 'id = ?', whereArgs: [id]);
+    } catch (e) {
+      print(e);
+    }
   }
 }

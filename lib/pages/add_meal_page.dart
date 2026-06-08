@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:kalorilaskuri/db/firestore_util.dart';
 import 'package:kalorilaskuri/db/meal.dart';
 import 'package:kalorilaskuri/db/sqflite_util.dart';
 
@@ -38,6 +39,7 @@ class _AddMealPageState extends State<AddMealPage> {
     final amount = _mealSizeType == 'Määrä'
         ? int.parse(_amountController.text)
         : null;
+    final now = DateTime.now();
 
     final Meal meal = Meal(
       name: name,
@@ -46,10 +48,13 @@ class _AddMealPageState extends State<AddMealPage> {
       weight: weight,
       size: size,
       amount: amount,
-      createdAt: DateTime.now().toIso8601String(),
+      createdAt: now.toIso8601String(),
     );
 
     try {
+      final FirestoreUtil firestoreUtil = FirestoreUtil();
+      await firestoreUtil.addCalories(calories, _type, now);
+
       final SqfliteUtil sqfliteUtil = SqfliteUtil();
       await sqfliteUtil.insertMeal(meal);
 
