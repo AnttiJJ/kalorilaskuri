@@ -4,14 +4,16 @@ import 'package:kalorilaskuri/db/firestore_util.dart';
 import 'package:kalorilaskuri/db/meal.dart';
 import 'package:kalorilaskuri/db/sqflite_util.dart';
 
-class AddMealPage extends StatefulWidget {
-  const AddMealPage({super.key});
+class UpdateMealPage extends StatefulWidget {
+  const UpdateMealPage({super.key, required this.meal});
+
+  final Meal meal;
 
   @override
-  State<AddMealPage> createState() => _AddMealPageState();
+  State<UpdateMealPage> createState() => _UpdateMealPageState();
 }
 
-class _AddMealPageState extends State<AddMealPage> {
+class _UpdateMealPageState extends State<UpdateMealPage> {
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
   final _caloriesController = TextEditingController();
@@ -23,6 +25,26 @@ class _AddMealPageState extends State<AddMealPage> {
   String? _mealSize;
 
   @override
+  void initState() {
+    _nameController.text = widget.meal.name;
+    _caloriesController.text = widget.meal.calories.toString();
+
+    _type = widget.meal.type;
+
+    if (widget.meal.size != null) {
+      _mealSizeType = 'Koko';
+      _mealSize = widget.meal.size;
+    } else if (widget.meal.amount != null) {
+      _mealSizeType = 'Määrä';
+      _amountController.text = widget.meal.amount.toString();
+    } else {
+      _weightController.text = widget.meal.weight.toString();
+    }
+
+    super.initState();
+  }
+
+  @override
   void dispose() {
     _nameController.dispose();
     _caloriesController.dispose();
@@ -31,7 +53,7 @@ class _AddMealPageState extends State<AddMealPage> {
     super.dispose();
   }
 
-  Future<void> saveMeal() async {
+  Future<void> updateMeal() async {
     final name = _nameController.text;
     final calories = int.parse(_caloriesController.text);
     final weight = _mealSizeType == 'Paino'
@@ -41,24 +63,33 @@ class _AddMealPageState extends State<AddMealPage> {
     final amount = _mealSizeType == 'Määrä'
         ? int.parse(_amountController.text)
         : null;
-    final now = DateTime.now();
+    final date = widget.meal.createdAt;
 
-    final Meal meal = Meal(
+    final Meal updatedMeal = Meal(
+      id: widget.meal.id,
       name: name,
       calories: calories,
       type: _type,
       weight: weight,
       size: size,
       amount: amount,
-      createdAt: now.toIso8601String(),
+      createdAt: date,
     );
+
+    print(weight);
+    print(size);
+    print(amount);
 
     try {
       final FirestoreUtil firestoreUtil = FirestoreUtil();
-      await firestoreUtil.addCalories(calories, _type, now);
+      await firestoreUtil.updateCalories(
+        calories - widget.meal.calories,
+        _type,
+        DateTime.parse(date),
+      );
 
-      final SqfliteUtil sqfliteUtil = SqfliteUtil();
-      await sqfliteUtil.insertMeal(meal);
+      SqfliteUtil sqfliteUtil = SqfliteUtil();
+      await sqfliteUtil.updateMeal(updatedMeal);
 
       if (!mounted) return;
       Navigator.pop(context);
@@ -164,7 +195,7 @@ class _AddMealPageState extends State<AddMealPage> {
               if (_mealSizeType == 'Koko')
                 DropdownButtonFormField(
                   decoration: const InputDecoration(labelText: 'Aterian koko'),
-                  initialValue: 'Pieni',
+                  initialValue: widget.meal.size,
                   items: const [
                     DropdownMenuItem(value: 'Pieni', child: Text('Pieni')),
                     DropdownMenuItem(
@@ -203,10 +234,10 @@ class _AddMealPageState extends State<AddMealPage> {
               ElevatedButton(
                 onPressed: () {
                   if (_formKey.currentState!.validate()) {
-                    saveMeal();
+                    updateMeal();
                   }
                 },
-                child: const Text('Tallenna'),
+                child: const Text('Päivitä'),
               ),
             ],
           ),

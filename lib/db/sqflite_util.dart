@@ -32,6 +32,17 @@ class SqfliteUtil {
     );
   }
 
+  Future<void> updateMeal(Meal meal) async {
+    final db = await database;
+
+    await db.update(
+      'meals',
+      meal.toMap(),
+      where: 'id = ?',
+      whereArgs: [meal.id],
+    );
+  }
+
   Future<List<Meal>> getMeals() async {
     final db = await database;
 
@@ -72,7 +83,7 @@ class SqfliteUtil {
       final db = await database;
       final FirestoreUtil firestoreUtil = FirestoreUtil();
 
-      await firestoreUtil.removeCalories(calories, type, datetime);
+      await firestoreUtil.updateCalories(-calories, type, datetime);
 
       await db.delete('meals', where: 'id = ?', whereArgs: [id]);
     } catch (e) {

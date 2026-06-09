@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:kalorilaskuri/db/meal.dart';
 import 'package:kalorilaskuri/db/sqflite_util.dart';
 import 'package:kalorilaskuri/pages/add_meal_page.dart';
+import 'package:kalorilaskuri/pages/update_meal_page.dart';
 import 'package:kalorilaskuri/utils/extensions.dart';
 
 class MealsPage extends StatefulWidget {
@@ -133,21 +134,39 @@ class _MealsPageState extends State<MealsPage> {
                       child: ListTile(
                         title: Text(meals[index].name),
                         leading: meals[index].icon,
-                        trailing: IconButton(
-                          onPressed: () => deleteMeal(
-                            meals[index].id!,
-                            meals[index].name,
-                            meals[index].calories,
-                            meals[index].type,
-                            DateTime.parse(meals[index].createdAt),
-                          ),
-                          icon: Icon(Icons.delete, color: Colors.red),
+                        trailing: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            IconButton(
+                              onPressed: () async {
+                                await Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        UpdateMealPage(meal: meals[index]),
+                                  ),
+                                );
+                                setState(() {});
+                              },
+                              icon: Icon(Icons.mode, color: Colors.blue),
+                            ),
+                            IconButton(
+                              onPressed: () => deleteMeal(
+                                meals[index].id!,
+                                meals[index].name,
+                                meals[index].calories,
+                                meals[index].type,
+                                DateTime.parse(meals[index].createdAt),
+                              ),
+                              icon: Icon(Icons.delete, color: Colors.red),
+                            ),
+                          ],
                         ),
                         subtitle: Row(
                           children: [
                             Expanded(
                               child: Text(
-                                'Kalorit: ${meals[index].calories.toString()}',
+                                '${meals[index].calories.toString()} kcal',
                               ),
                             ),
                             Expanded(child: Text(meals[index].mealSize)),

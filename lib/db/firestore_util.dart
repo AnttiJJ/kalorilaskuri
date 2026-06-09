@@ -15,7 +15,7 @@ class FirestoreUtil {
       final doc = await db.collection('calories').doc(id).get();
 
       if (doc.exists) {
-        updateCalories(doc, calories, type);
+        _doUpdateCalories(doc, calories, type);
       } else {
         final newDoc = <String, dynamic>{
           'user': user,
@@ -30,7 +30,7 @@ class FirestoreUtil {
     }
   }
 
-  Future<void> updateCalories(
+  Future<void> _doUpdateCalories(
     DocumentSnapshot<Map<String, dynamic>> doc,
     int calories,
     String type,
@@ -40,7 +40,7 @@ class FirestoreUtil {
     await db.collection('calories').doc(doc.id).update({type: newCalories});
   }
 
-  Future<void> removeCalories(
+  Future<void> updateCalories(
     int calories,
     String type,
     DateTime datetime,
@@ -49,7 +49,7 @@ class FirestoreUtil {
       final id = await createId(datetime);
       final doc = await db.collection('calories').doc(id).get();
 
-      await updateCalories(doc, -calories, type);
+      await _doUpdateCalories(doc, calories, type);
     } catch (e) {
       print(e);
       rethrow;
