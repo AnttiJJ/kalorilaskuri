@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:kalorilaskuri/pages/add_food_page.dart';
+import 'package:kalorilaskuri/widgets/foods_stream_builder.dart';
 
 class FoodsPage extends StatefulWidget {
   const FoodsPage({super.key});
@@ -32,9 +33,9 @@ class _FoodsPageState extends State<FoodsPage> {
           ),
           body: const TabBarView(
             children: <Widget>[
-              Center(child: Text('Päivä')),
-              Center(child: Text('Viikko')),
-              Center(child: Text('Kuukausi')),
+              FoodsStreamBuilder(type: 'Ateria'),
+              FoodsStreamBuilder(type: 'Välipala'),
+              FoodsStreamBuilder(type: 'Herkku'),
             ],
           ),
           floatingActionButton: FloatingActionButton(

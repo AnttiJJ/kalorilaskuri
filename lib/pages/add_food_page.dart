@@ -20,6 +20,7 @@ class _AddFoodPageState extends State<AddFoodPage> {
   final _calLargeController = TextEditingController();
 
   String _type = 'Ateria';
+  bool _emptyCals = false;
   bool _hasWeightCal = false;
   bool _hasPieceCal = false;
   bool _hasSizeCal = false;
@@ -63,6 +64,13 @@ class _AddFoodPageState extends State<AddFoodPage> {
       if (smallCal != null || normalCal != null || largeCal != null) {
         sizeCal = {'Pieni': smallCal, 'Normaali': normalCal, 'Iso': largeCal};
       }
+    }
+
+    if (weightCal == null && pieceCal == null && sizeCal == null) {
+      setState(() {
+        _emptyCals = true;
+      });
+      return;
     }
 
     Food food = Food(
@@ -126,6 +134,11 @@ class _AddFoodPageState extends State<AddFoodPage> {
                 ),
                 SizedBox(height: 40),
                 Text('Kalorit', style: TextStyle(fontSize: 24)),
+                if (_emptyCals)
+                  Text(
+                    'Kaikki kalorit eivät voi olla tyhjiä',
+                    style: TextStyle(color: Colors.red),
+                  ),
                 Row(
                   children: [
                     Expanded(

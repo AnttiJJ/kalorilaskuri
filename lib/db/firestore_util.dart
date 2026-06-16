@@ -30,7 +30,6 @@ class FirestoreUtil {
         await db.collection('calories').doc(id).set(newDoc);
       }
     } catch (e) {
-      print(e);
       rethrow;
     }
   }
@@ -40,9 +39,13 @@ class FirestoreUtil {
     int calories,
     String type,
   ) async {
-    final int newCalories = _calculateNewCalories(doc, calories, type);
+    try {
+      final int newCalories = _calculateNewCalories(doc, calories, type);
 
-    await db.collection('calories').doc(doc.id).update({type: newCalories});
+      await db.collection('calories').doc(doc.id).update({type: newCalories});
+    } catch (e) {
+      rethrow;
+    }
   }
 
   Future<void> updateCalories(
@@ -56,7 +59,6 @@ class FirestoreUtil {
 
       await _doUpdateCalories(doc, calories, type);
     } catch (e) {
-      print(e);
       rethrow;
     }
   }
@@ -86,18 +88,21 @@ class FirestoreUtil {
   // ***************************
 
   Future<bool> isNameAvailable(String name) async {
-    final doc = await db.collection('foods').doc(name).get();
-    if (doc.exists) {
-      return false;
+    try {
+      final doc = await db.collection('foods').doc(name).get();
+      if (doc.exists) {
+        return false;
+      }
+      return true;
+    } catch (e) {
+      rethrow;
     }
-    return true;
   }
 
   Future<void> _doAddFood(Food food) async {
     try {
       await db.collection('foods').doc(food.name).set(food.toMap());
     } catch (e) {
-      print(e);
       rethrow;
     }
   }
@@ -110,7 +115,6 @@ class FirestoreUtil {
       }
       return false;
     } catch (e) {
-      print(e);
       rethrow;
     }
   }
@@ -124,5 +128,18 @@ class FirestoreUtil {
 
     final doc = food.docs[0].data();
     return doc['calors'];
+  }
+
+  Future<QuerySnapshot<Map<String, dynamic>>> getFoods(String type) async {
+    try {
+      final foods = await db
+          .collection('foods')
+          .where('type', isEqualTo: type)
+          .get();
+
+      return foods;
+    } catch (e) {
+      rethrow;
+    }
   }
 }
