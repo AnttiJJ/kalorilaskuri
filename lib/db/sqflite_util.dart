@@ -88,6 +88,7 @@ class SqfliteUtil {
       await db.delete('meals', where: 'id = ?', whereArgs: [id]);
     } catch (e) {
       print(e);
+      rethrow;
     }
   }
 }

@@ -76,10 +76,6 @@ class _UpdateMealPageState extends State<UpdateMealPage> {
       createdAt: date,
     );
 
-    print(weight);
-    print(size);
-    print(amount);
-
     try {
       final FirestoreUtil firestoreUtil = FirestoreUtil();
       await firestoreUtil.updateCalories(
@@ -103,7 +99,7 @@ class _UpdateMealPageState extends State<UpdateMealPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Uusi ateria'),
+        title: Text('Muokkaa ateriaa'),
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
       ),
       body: Padding(

@@ -1,9 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:kalorilaskuri/db/food.dart';
 import 'package:kalorilaskuri/utils/extensions.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class FirestoreUtil {
   static final db = FirebaseFirestore.instance;
+
+  // ******************************
+  // ********** CALORIES **********
+  // ******************************
 
   Future<void> addCalories(int calories, String type, DateTime datetime) async {
     try {
@@ -26,7 +31,7 @@ class FirestoreUtil {
       }
     } catch (e) {
       print(e);
-      return;
+      rethrow;
     }
   }
 
@@ -35,7 +40,7 @@ class FirestoreUtil {
     int calories,
     String type,
   ) async {
-    final int newCalories = calculateNewCalories(doc, calories, type);
+    final int newCalories = _calculateNewCalories(doc, calories, type);
 
     await db.collection('calories').doc(doc.id).update({type: newCalories});
   }
@@ -56,24 +61,13 @@ class FirestoreUtil {
     }
   }
 
-  Future<String> read() async {
-    final food = await db
-        .collection('foods')
-        .where('name', isEqualTo: 'kanapasta')
-        .limit(1)
-        .get();
-
-    final doc = food.docs[0].data();
-    return doc['calors'];
-  }
-
   Future<String> createId(DateTime datetime) async {
     final prefs = await SharedPreferences.getInstance();
     final user = prefs.getString('user');
     return '${user}_${datetime.formatDate}';
   }
 
-  int calculateNewCalories(
+  int _calculateNewCalories(
     DocumentSnapshot<Map<String, dynamic>> doc,
     int calories,
     String type,
@@ -85,5 +79,50 @@ class FirestoreUtil {
         : calories;
 
     return newCalories;
+  }
+
+  // ***************************
+  // ********** FOODS **********
+  // ***************************
+
+  Future<bool> isNameAvailable(String name) async {
+    final doc = await db.collection('foods').doc(name).get();
+    if (doc.exists) {
+      return false;
+    }
+    return true;
+  }
+
+  Future<void> _doAddFood(Food food) async {
+    try {
+      await db.collection('foods').doc(food.name).set(food.toMap());
+    } catch (e) {
+      print(e);
+      rethrow;
+    }
+  }
+
+  Future<bool> addFood(Food food) async {
+    try {
+      if (await isNameAvailable(food.name)) {
+        await _doAddFood(food);
+        return true;
+      }
+      return false;
+    } catch (e) {
+      print(e);
+      rethrow;
+    }
+  }
+
+  Future<String> read() async {
+    final food = await db
+        .collection('foods')
+        .where('name', isEqualTo: 'kanapasta')
+        .limit(1)
+        .get();
+
+    final doc = food.docs[0].data();
+    return doc['calors'];
   }
 }
