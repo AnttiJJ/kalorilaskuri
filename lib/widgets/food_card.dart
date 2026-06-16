@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kalorilaskuri/db/firestore_util.dart';
 
 class FoodCard extends StatefulWidget {
   final Map<String, dynamic> food;
@@ -23,6 +24,42 @@ class _FoodCardState extends State<FoodCard> {
     super.initState();
   }
 
+  Future<void> deleteFood(String name) async {
+    final confirmDelete = await showDialog<bool>(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: const Text('Poista ruoka'),
+          content: Text('Haluatko varmasti poistaa $name ruoan'),
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context, false);
+              },
+              child: const Text('Peruuta'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.pop(context, true);
+              },
+              child: const Text('Poista'),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (confirmDelete == true) {
+      try {
+        final FirestoreUtil firestoreUtil = FirestoreUtil();
+        firestoreUtil.deleteFood(name);
+      } catch (e) {
+        print(e);
+        return;
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -45,7 +82,7 @@ class _FoodCardState extends State<FoodCard> {
                     icon: Icon(Icons.mode, color: Colors.blue),
                   ),
                   IconButton(
-                    onPressed: () {},
+                    onPressed: () => deleteFood(widget.food['name']),
                     icon: Icon(Icons.delete, color: Colors.red),
                   ),
                 ],

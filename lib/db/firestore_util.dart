@@ -119,17 +119,6 @@ class FirestoreUtil {
     }
   }
 
-  Future<String> read() async {
-    final food = await db
-        .collection('foods')
-        .where('name', isEqualTo: 'kanapasta')
-        .limit(1)
-        .get();
-
-    final doc = food.docs[0].data();
-    return doc['calors'];
-  }
-
   Future<QuerySnapshot<Map<String, dynamic>>> getFoods(String type) async {
     try {
       final foods = await db
@@ -138,6 +127,14 @@ class FirestoreUtil {
           .get();
 
       return foods;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
+  Future<void> deleteFood(String name) async {
+    try {
+      await db.collection('foods').doc(name).delete();
     } catch (e) {
       rethrow;
     }
