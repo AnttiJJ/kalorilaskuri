@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:kalorilaskuri/db/firestore_util.dart';
+import 'package:kalorilaskuri/db/food.dart';
+import 'package:kalorilaskuri/pages/update_food_page.dart';
 
 class FoodCard extends StatefulWidget {
-  final Map<String, dynamic> food;
+  final Food food;
 
   const FoodCard({super.key, required this.food});
 
@@ -18,9 +20,9 @@ class _FoodCardState extends State<FoodCard> {
 
   @override
   void initState() {
-    weightCal = widget.food['caloriesPer100g'];
-    pieceCal = widget.food['caloriesPerPiece'];
-    sizeCal = widget.food['caloriesPerSize'];
+    weightCal = widget.food.caloriesPer100g;
+    pieceCal = widget.food.caloriesPerPiece;
+    sizeCal = widget.food.caloriesPerSize;
     super.initState();
   }
 
@@ -73,16 +75,25 @@ class _FoodCardState extends State<FoodCard> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             ListTile(
-              title: Text(widget.food['name']),
+              title: Text(widget.food.name),
               trailing: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   IconButton(
-                    onPressed: () {},
+                    onPressed: () async {
+                      await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              UpdateFoodPage(food: widget.food),
+                        ),
+                      );
+                      //setState(() {});
+                    },
                     icon: Icon(Icons.mode, color: Colors.blue),
                   ),
                   IconButton(
-                    onPressed: () => deleteFood(widget.food['name']),
+                    onPressed: () => deleteFood(widget.food.name),
                     icon: Icon(Icons.delete, color: Colors.red),
                   ),
                 ],

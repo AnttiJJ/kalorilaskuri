@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class Food {
   final String name;
   final String type;
@@ -21,5 +23,20 @@ class Food {
       'caloriesPerPiece': caloriesPerPiece,
       'caloriesPerSize': caloriesPerSize,
     };
+  }
+
+  factory Food.fromFirestore(DocumentSnapshot<Map<String, dynamic>> doc) {
+    final data = doc.data()!;
+    final sizeCaldata = data['caloriesPerSize'] as Map<String, dynamic>?;
+
+    return Food(
+      name: doc.id,
+      type: data['type'] as String,
+      caloriesPer100g: data['caloriesPer100g'] as int?,
+      caloriesPerPiece: data['caloriesPerPiece'] as int?,
+      caloriesPerSize: sizeCaldata?.map(
+        (key, value) => MapEntry(key, value as int?),
+      ),
+    );
   }
 }

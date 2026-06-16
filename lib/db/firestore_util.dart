@@ -87,13 +87,13 @@ class FirestoreUtil {
   // ********** FOODS **********
   // ***************************
 
-  Future<bool> isNameAvailable(String name) async {
+  Future<bool> foodExists(String name) async {
     try {
       final doc = await db.collection('foods').doc(name).get();
       if (doc.exists) {
-        return false;
+        return true;
       }
-      return true;
+      return false;
     } catch (e) {
       rethrow;
     }
@@ -109,24 +109,27 @@ class FirestoreUtil {
 
   Future<bool> addFood(Food food) async {
     try {
-      if (await isNameAvailable(food.name)) {
+      if (await foodExists(food.name)) {
+        return false;
+      } else {
         await _doAddFood(food);
         return true;
       }
-      return false;
     } catch (e) {
       rethrow;
     }
   }
 
-  Future<QuerySnapshot<Map<String, dynamic>>> getFoods(String type) async {
+  Future<void> updateFood(Food food) async {
     try {
-      final foods = await db
-          .collection('foods')
-          .where('type', isEqualTo: type)
-          .get();
-
-      return foods;
+      if (await foodExists(food.name)) {
+        await db.collection('foods').doc(food.name).update({
+          'type': food.type,
+          'caloriesPer100g': food.caloriesPer100g,
+          'caloriesPerPiece': food.caloriesPerPiece,
+          'caloriesPerSize': food.caloriesPerSize,
+        });
+      }
     } catch (e) {
       rethrow;
     }
