@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:kalorilaskuri/db/firestore_util.dart';
 import 'package:kalorilaskuri/db/food.dart';
+import 'package:kalorilaskuri/pages/update_extra_page.dart';
 import 'package:kalorilaskuri/pages/update_food_page.dart';
 
 class FoodCard extends StatefulWidget {
@@ -84,8 +85,12 @@ class _FoodCardState extends State<FoodCard> {
                       await Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) =>
-                              UpdateFoodPage(food: widget.food),
+                          builder: (context) {
+                            if (widget.food.type == 'Lisuke') {
+                              return UpdateExtraPage(food: widget.food);
+                            }
+                            return UpdateFoodPage(food: widget.food);
+                          },
                         ),
                       );
                       //setState(() {});

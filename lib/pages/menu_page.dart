@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:kalorilaskuri/notifiers.dart';
+import 'package:kalorilaskuri/pages/extras_page.dart';
 import 'package:kalorilaskuri/pages/foods_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -32,7 +33,12 @@ class MenuPage extends StatelessWidget {
           contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
           leading: Icon(Icons.breakfast_dining),
           title: Text('Lisukkeet'),
-          onTap: () {},
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => ExtrasPage()),
+            );
+          },
         ),
         ListTile(
           contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
