@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:kalorilaskuri/db/firestore_util.dart';
 import 'package:kalorilaskuri/db/food.dart';
+import 'package:kalorilaskuri/pages/update_drink_page.dart';
 import 'package:kalorilaskuri/pages/update_extra_page.dart';
 import 'package:kalorilaskuri/pages/update_food_page.dart';
 
@@ -88,6 +89,8 @@ class _FoodCardState extends State<FoodCard> {
                           builder: (context) {
                             if (widget.food.type == 'Lisuke') {
                               return UpdateExtraPage(food: widget.food);
+                            } else if (widget.food.type == 'Juoma') {
+                              return UpdateDrinkPage(food: widget.food);
                             }
                             return UpdateFoodPage(food: widget.food);
                           },

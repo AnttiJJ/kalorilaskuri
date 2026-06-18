@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:kalorilaskuri/notifiers.dart';
+import 'package:kalorilaskuri/pages/drinks_page.dart';
 import 'package:kalorilaskuri/pages/extras_page.dart';
 import 'package:kalorilaskuri/pages/foods_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -44,7 +45,12 @@ class MenuPage extends StatelessWidget {
           contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
           leading: Icon(Icons.coffee),
           title: Text('Juomat'),
-          onTap: () {},
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => DrinksPage()),
+            );
+          },
         ),
         ListTile(
           contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
