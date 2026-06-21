@@ -12,7 +12,8 @@ class AddMealPage extends StatefulWidget {
 }
 
 class _AddMealPageState extends State<AddMealPage> {
-  final _formKey = GlobalKey<FormState>();
+  final _customFormKey = GlobalKey<FormState>();
+  final _menuFormKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
   final _caloriesController = TextEditingController();
   final _weightController = TextEditingController();
@@ -76,9 +77,9 @@ class _AddMealPageState extends State<AddMealPage> {
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
       ),
       body: Padding(
-        padding: const EdgeInsets.all(30.0),
+        padding: const EdgeInsets.all(20.0),
         child: Form(
-          key: _formKey,
+          key: _customFormKey,
           child: Column(
             children: [
               TextFormField(
@@ -112,19 +113,70 @@ class _AddMealPageState extends State<AddMealPage> {
                 },
               ),
               SizedBox(height: 20),
-              SegmentedButton(
-                segments: const [
-                  ButtonSegment(value: 'Ateria', label: Text('Ateria')),
-                  ButtonSegment(value: 'Välipala', label: Text('Välipala')),
-                  ButtonSegment(value: 'Herkku', label: Text('Herkku')),
+              Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: [
+                  ChoiceChip(
+                    label: const Text('Ateria'),
+                    selected: _type == 'Ateria',
+                    onSelected: (value) {
+                      setState(() {
+                        _type = 'Ateria';
+                      });
+                    },
+                  ),
+                  ChoiceChip(
+                    label: const Text('Välipala'),
+                    selected: _type == 'Välipala',
+                    onSelected: (value) {
+                      setState(() {
+                        _type = 'Välipala';
+                      });
+                    },
+                  ),
+                  ChoiceChip(
+                    label: const Text('Herkku'),
+                    selected: _type == 'Herkku',
+                    onSelected: (value) {
+                      setState(() {
+                        _type = 'Herkku';
+                      });
+                    },
+                  ),
+                  ChoiceChip(
+                    label: const Text('Lisuke'),
+                    selected: _type == 'Lisuke',
+                    onSelected: (value) {
+                      setState(() {
+                        _type = 'Lisuke';
+                      });
+                    },
+                  ),
+                  ChoiceChip(
+                    label: const Text('Juoma'),
+                    selected: _type == 'Juoma',
+                    onSelected: (value) {
+                      setState(() {
+                        _type = 'Juoma';
+                      });
+                    },
+                  ),
                 ],
-                selected: {_type},
-                onSelectionChanged: (selection) {
-                  setState(() {
-                    _type = selection.first;
-                  });
-                },
               ),
+              // SegmentedButton(
+              //   segments: const [
+              //     ButtonSegment(value: 'Ateria', label: Text('Ateria')),
+              //     ButtonSegment(value: 'Välipala', label: Text('Välipala')),
+              //     ButtonSegment(value: 'Herkku', label: Text('Herkku')),
+              //   ],
+              //   selected: {_type},
+              //   onSelectionChanged: (selection) {
+              //     setState(() {
+              //       _type = selection.first;
+              //     });
+              //   },
+              // ),
               SizedBox(height: 20),
               SegmentedButton(
                 segments: const [
@@ -184,7 +236,7 @@ class _AddMealPageState extends State<AddMealPage> {
                   controller: _amountController,
                   keyboardType: TextInputType.number,
                   inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                  decoration: const InputDecoration(labelText: 'Määrä'),
+                  decoration: const InputDecoration(labelText: 'Kpl'),
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Anna määrä';
@@ -202,7 +254,7 @@ class _AddMealPageState extends State<AddMealPage> {
               SizedBox(height: 30),
               ElevatedButton(
                 onPressed: () {
-                  if (_formKey.currentState!.validate()) {
+                  if (_customFormKey.currentState!.validate()) {
                     saveMeal();
                   }
                 },

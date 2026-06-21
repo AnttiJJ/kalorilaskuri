@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:kalorilaskuri/db/meal.dart';
 import 'package:kalorilaskuri/db/sqflite_util.dart';
+import 'package:kalorilaskuri/pages/select_meal_from_menu_page.dart';
 import 'package:kalorilaskuri/pages/add_meal_page.dart';
 import 'package:kalorilaskuri/pages/update_meal_page.dart';
 import 'package:kalorilaskuri/utils/extensions.dart';
@@ -63,6 +64,62 @@ class _MealsPageState extends State<MealsPage> {
         print(e);
       }
     }
+  }
+
+  Future<void> newMealDialog() async {
+    bool? fromMenu;
+
+    await showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          content: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              SizedBox(
+                height: 100,
+                width: 250,
+                child: FilledButton(
+                  onPressed: () {
+                    fromMenu = true;
+                    Navigator.pop(context);
+                  },
+                  child: const Text('Listalta', style: TextStyle(fontSize: 34)),
+                ),
+              ),
+              SizedBox(height: 40),
+              SizedBox(
+                height: 100,
+                width: 250,
+                child: FilledButton(
+                  onPressed: () {
+                    fromMenu = false;
+                    Navigator.pop(context);
+                  },
+                  child: const Text('Kustomi', style: TextStyle(fontSize: 34)),
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+
+    if (!mounted) return;
+
+    if (fromMenu == false) {
+      await Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const AddMealPage()),
+      );
+    } else if (fromMenu == true) {
+      await Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => const SelectMealFromMenuPage()),
+      );
+    }
+    setState(() {});
   }
 
   Future<void> _selectDate() async {
@@ -182,13 +239,7 @@ class _MealsPageState extends State<MealsPage> {
         ],
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () async {
-          await Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const AddMealPage()),
-          );
-          setState(() {});
-        },
+        onPressed: () => newMealDialog(),
         tooltip: 'Lisää ateria',
         child: const Icon(Icons.add),
       ),
