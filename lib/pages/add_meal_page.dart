@@ -12,8 +12,7 @@ class AddMealPage extends StatefulWidget {
 }
 
 class _AddMealPageState extends State<AddMealPage> {
-  final _customFormKey = GlobalKey<FormState>();
-  final _menuFormKey = GlobalKey<FormState>();
+  final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
   final _caloriesController = TextEditingController();
   final _weightController = TextEditingController();
@@ -79,7 +78,7 @@ class _AddMealPageState extends State<AddMealPage> {
       body: Padding(
         padding: const EdgeInsets.all(20.0),
         child: Form(
-          key: _customFormKey,
+          key: _formKey,
           child: Column(
             children: [
               TextFormField(
@@ -254,7 +253,7 @@ class _AddMealPageState extends State<AddMealPage> {
               SizedBox(height: 30),
               ElevatedButton(
                 onPressed: () {
-                  if (_customFormKey.currentState!.validate()) {
+                  if (_formKey.currentState!.validate()) {
                     saveMeal();
                   }
                 },
