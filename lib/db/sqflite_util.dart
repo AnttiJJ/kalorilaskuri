@@ -43,10 +43,16 @@ class SqfliteUtil {
     );
   }
 
-  Future<List<Meal>> getMeals() async {
+  Future<List<Meal>> getMeals(DateTime datetime) async {
     final db = await database;
+    final start = DateTime(datetime.year, datetime.month, datetime.day);
+    final end = start.add(const Duration(days: 1));
 
-    final List<Map<String, Object?>> mealMaps = await db.query('meals');
+    final List<Map<String, Object?>> mealMaps = await db.query(
+      'meals',
+      where: 'created_at >= ? AND created_at < ?',
+      whereArgs: [start.toIso8601String(), end.toIso8601String()],
+    );
 
     return [
       for (final {

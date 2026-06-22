@@ -176,7 +176,7 @@ class _MealsPageState extends State<MealsPage> {
           ),
           Expanded(
             child: FutureBuilder<List<Meal>>(
-              future: sqfliteUtil.getMeals(),
+              future: sqfliteUtil.getMeals(date),
               builder: (context, snapshot) {
                 if (!snapshot.hasData) {
                   return const CircularProgressIndicator();
