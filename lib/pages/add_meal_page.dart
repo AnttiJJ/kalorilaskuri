@@ -21,6 +21,13 @@ class _AddMealPageState extends State<AddMealPage> {
   String _type = 'Ateria';
   String _mealSizeType = 'Paino';
   String? _mealSize;
+  DateTime? _datetime;
+
+  @override
+  void initState() {
+    _datetime = DateTime.now();
+    super.initState();
+  }
 
   @override
   void dispose() {
@@ -41,7 +48,12 @@ class _AddMealPageState extends State<AddMealPage> {
     final amount = _mealSizeType == 'Määrä'
         ? int.parse(_amountController.text)
         : null;
-    final now = DateTime.now();
+
+    DateTime date = DateTime.now();
+
+    if (!isSameDate(date, _datetime!)) {
+      date = _datetime!;
+    }
 
     final Meal meal = Meal(
       name: name,
@@ -50,12 +62,12 @@ class _AddMealPageState extends State<AddMealPage> {
       weight: weight,
       size: size,
       amount: amount,
-      createdAt: now.toIso8601String(),
+      createdAt: date.toIso8601String(),
     );
 
     try {
       final FirestoreUtil firestoreUtil = FirestoreUtil();
-      await firestoreUtil.addCalories(calories, _type, now);
+      await firestoreUtil.addCalories(calories, _type, date);
 
       final SqfliteUtil sqfliteUtil = SqfliteUtil();
       await sqfliteUtil.insertMeal(meal);
@@ -66,6 +78,25 @@ class _AddMealPageState extends State<AddMealPage> {
       print(e);
       return;
     }
+  }
+
+  Future<void> selectDate() async {
+    final date = await showDatePicker(
+      context: context,
+      initialDate: _datetime ?? DateTime.now(),
+      firstDate: DateTime(2026, 6, 1),
+      lastDate: DateTime.now(),
+    );
+
+    if (date != null) {
+      setState(() {
+        _datetime = date;
+      });
+    }
+  }
+
+  bool isSameDate(DateTime a, DateTime b) {
+    return a.year == b.year && a.month == b.month && a.day == b.day;
   }
 
   @override
@@ -90,6 +121,19 @@ class _AddMealPageState extends State<AddMealPage> {
                   }
                   return null;
                 },
+              ),
+              SizedBox(height: 20),
+              Column(
+                children: [
+                  OutlinedButton(
+                    onPressed: selectDate,
+                    child: Text(
+                      '${_datetime!.day.toString().padLeft(2, '0')}.'
+                      '${_datetime!.month.toString().padLeft(2, '0')}.'
+                      '${_datetime!.year}',
+                    ),
+                  ),
+                ],
               ),
               SizedBox(height: 20),
               TextFormField(

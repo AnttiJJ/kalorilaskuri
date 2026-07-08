@@ -20,6 +20,13 @@ class _AddMealFromMenuPageState extends State<AddMealFromMenuPage> {
   final _weightController = TextEditingController();
 
   String? _mealSizeType;
+  DateTime? _datetime;
+
+  @override
+  void initState() {
+    _datetime = DateTime.now();
+    super.initState();
+  }
 
   @override
   void dispose() {
@@ -31,12 +38,16 @@ class _AddMealFromMenuPageState extends State<AddMealFromMenuPage> {
   Future<void> saveMeal() async {
     final name = widget.food.name;
     final type = widget.food.type;
-    final now = DateTime.now();
 
+    DateTime date = DateTime.now();
     int calories = 0;
     int? weight;
     int? amount;
     String? size;
+
+    if (!isSameDate(date, _datetime!)) {
+      date = _datetime!;
+    }
 
     switch (_mealSizeType) {
       case 'Paino':
@@ -69,12 +80,12 @@ class _AddMealFromMenuPageState extends State<AddMealFromMenuPage> {
       weight: weight,
       size: size,
       amount: amount,
-      createdAt: now.toIso8601String(),
+      createdAt: date.toIso8601String(),
     );
 
     try {
       final FirestoreUtil firestoreUtil = FirestoreUtil();
-      await firestoreUtil.addCalories(calories, type, now);
+      await firestoreUtil.addCalories(calories, type, date);
 
       final SqfliteUtil sqfliteUtil = SqfliteUtil();
       await sqfliteUtil.insertMeal(meal);
@@ -85,6 +96,25 @@ class _AddMealFromMenuPageState extends State<AddMealFromMenuPage> {
       print(e);
       return;
     }
+  }
+
+  Future<void> selectDate() async {
+    final date = await showDatePicker(
+      context: context,
+      initialDate: _datetime ?? DateTime.now(),
+      firstDate: DateTime(2026, 6, 1),
+      lastDate: DateTime.now(),
+    );
+
+    if (date != null) {
+      setState(() {
+        _datetime = date;
+      });
+    }
+  }
+
+  bool isSameDate(DateTime a, DateTime b) {
+    return a.year == b.year && a.month == b.month && a.day == b.day;
   }
 
   @override
@@ -106,6 +136,19 @@ class _AddMealFromMenuPageState extends State<AddMealFromMenuPage> {
               key: _formKey,
               child: Column(
                 children: [
+                  Column(
+                    children: [
+                      OutlinedButton(
+                        onPressed: selectDate,
+                        child: Text(
+                          '${_datetime!.day.toString().padLeft(2, '0')}.'
+                          '${_datetime!.month.toString().padLeft(2, '0')}.'
+                          '${_datetime!.year}',
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 20),
                   if (widget.food.caloriesPer100g != null)
                     Column(
                       children: [
