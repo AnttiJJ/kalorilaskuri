@@ -13,7 +13,7 @@ class SqfliteUtil {
       join(await getDatabasesPath(), 'kalorilaskuri_database.db'),
       onCreate: (db, version) {
         return db.execute(
-          'CREATE TABLE meals(id INTEGER PRIMARY KEY, name TEXT NOT NULL, calories INTEGER NOT NULL, type TEXT NOT NULL, weight INTEGER, size TEXT, amount INTEGER, created_at TEXT NOT NULL)',
+          'CREATE TABLE meals(id INTEGER PRIMARY KEY, name TEXT NOT NULL, calories INTEGER NOT NULL, type TEXT NOT NULL, weight INTEGER, size TEXT, amount INTEGER, created_at TEXT NOT NULL, from_menu INTEGER NOT NULL)',
         );
       },
       version: 1,
@@ -64,6 +64,7 @@ class SqfliteUtil {
             'size': size as String?,
             'amount': amount as int?,
             'created_at': createdAt as String,
+            'from_menu': fromMenu as int,
           }
           in mealMaps)
         Meal(
@@ -75,6 +76,7 @@ class SqfliteUtil {
           size: size,
           amount: amount,
           createdAt: createdAt,
+          fromMenu: fromMenu,
         ),
     ];
   }
@@ -93,7 +95,6 @@ class SqfliteUtil {
 
       await db.delete('meals', where: 'id = ?', whereArgs: [id]);
     } catch (e) {
-      print(e);
       rethrow;
     }
   }

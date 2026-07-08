@@ -3,6 +3,7 @@ import 'package:kalorilaskuri/db/meal.dart';
 import 'package:kalorilaskuri/db/sqflite_util.dart';
 import 'package:kalorilaskuri/pages/select_meal_from_menu_page.dart';
 import 'package:kalorilaskuri/pages/add_meal_page.dart';
+import 'package:kalorilaskuri/pages/update_meal_from_menu_page.dart';
 import 'package:kalorilaskuri/pages/update_meal_page.dart';
 import 'package:kalorilaskuri/utils/extensions.dart';
 
@@ -199,8 +200,17 @@ class _MealsPageState extends State<MealsPage> {
                                 await Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                    builder: (context) =>
-                                        UpdateMealPage(meal: meals[index]),
+                                    builder: (context) {
+                                      if (meals[index].fromMenu != 1) {
+                                        return UpdateMealPage(
+                                          meal: meals[index],
+                                        );
+                                      } else {
+                                        return UpdateMealFromMenuPage(
+                                          meal: meals[index],
+                                        );
+                                      }
+                                    },
                                   ),
                                 );
                                 setState(() {});

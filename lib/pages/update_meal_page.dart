@@ -74,6 +74,7 @@ class _UpdateMealPageState extends State<UpdateMealPage> {
       size: size,
       amount: amount,
       createdAt: date,
+      fromMenu: 0,
     );
 
     try {

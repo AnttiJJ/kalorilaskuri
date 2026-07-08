@@ -9,6 +9,7 @@ class Meal {
   final String? size;
   final int? amount;
   final String createdAt;
+  final int fromMenu;
 
   Meal({
     this.id,
@@ -19,6 +20,7 @@ class Meal {
     this.size,
     this.amount,
     required this.createdAt,
+    required this.fromMenu,
   });
 
   Map<String, Object?> toMap() {
@@ -31,6 +33,7 @@ class Meal {
       'size': size,
       'amount': amount,
       'created_at': createdAt,
+      'from_menu': fromMenu,
     };
   }
 

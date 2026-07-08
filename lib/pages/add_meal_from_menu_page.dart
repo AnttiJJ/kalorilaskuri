@@ -81,6 +81,7 @@ class _AddMealFromMenuPageState extends State<AddMealFromMenuPage> {
       size: size,
       amount: amount,
       createdAt: date.toIso8601String(),
+      fromMenu: 1,
     );
 
     try {

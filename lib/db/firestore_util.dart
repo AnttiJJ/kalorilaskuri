@@ -87,6 +87,20 @@ class FirestoreUtil {
   // ********** FOODS **********
   // ***************************
 
+  Future<Food> getFood(String name) async {
+    try {
+      final doc = await db.collection('foods').doc(name).get();
+      if (!doc.exists) {
+        throw Exception('Food not found');
+      }
+
+      final food = Food.fromFirestore(doc);
+      return food;
+    } catch (e) {
+      rethrow;
+    }
+  }
+
   Future<bool> foodExists(String name) async {
     try {
       final doc = await db.collection('foods').doc(name).get();
