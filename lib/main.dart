@@ -5,6 +5,7 @@ import 'package:kalorilaskuri/db/auth_service.dart';
 import 'package:kalorilaskuri/firebase_options.dart';
 import 'package:kalorilaskuri/notifiers.dart';
 import 'package:kalorilaskuri/pages/calories_page.dart';
+import 'package:kalorilaskuri/pages/login_page.dart';
 import 'package:kalorilaskuri/pages/meals_page.dart';
 import 'package:kalorilaskuri/pages/menu_page.dart';
 import 'package:kalorilaskuri/pages/user_select_page.dart';
@@ -13,12 +14,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-
-  final auth = FirebaseAuth.instance;
-
-  if (auth.currentUser == null) {
-    await AuthService().signInAnonymously();
-  }
 
   final SharedPreferences prefs = await SharedPreferences.getInstance();
   final String? user = prefs.getString('user');
@@ -36,7 +31,22 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'KAlorilaskuri',
       theme: ThemeData(colorScheme: .fromSeed(seedColor: Colors.deepPurple)),
-      home: const MyHomePage(),
+      home: StreamBuilder<User?>(
+        stream: FirebaseAuth.instance.authStateChanges(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Scaffold(
+              body: Center(child: CircularProgressIndicator()),
+            );
+          }
+
+          if (snapshot.hasData) {
+            return const MyHomePage();
+          }
+
+          return const LoginPage();
+        },
+      ),
     );
   }
 }

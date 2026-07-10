@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:kalorilaskuri/notifiers.dart';
 import 'package:kalorilaskuri/pages/drinks_page.dart';
@@ -13,6 +14,11 @@ class MenuPage extends StatelessWidget {
     await prefs.remove('user');
 
     userSelectedNotifier.value = '';
+  }
+
+  Future<void> logOut() async {
+    clearUser();
+    await FirebaseAuth.instance.signOut();
   }
 
   @override
@@ -57,6 +63,12 @@ class MenuPage extends StatelessWidget {
           leading: Icon(Icons.person),
           title: Text('Vaihda käyttäjää'),
           onTap: () => clearUser(),
+        ),
+        ListTile(
+          contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+          leading: Icon(Icons.logout),
+          title: Text('Kirjaudu ulos'),
+          onTap: () => logOut(),
         ),
       ],
     );
