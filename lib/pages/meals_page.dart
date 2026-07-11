@@ -5,7 +5,6 @@ import 'package:kalorilaskuri/pages/select_meal_from_menu_page.dart';
 import 'package:kalorilaskuri/pages/add_meal_page.dart';
 import 'package:kalorilaskuri/pages/update_meal_from_menu_page.dart';
 import 'package:kalorilaskuri/pages/update_meal_page.dart';
-import 'package:kalorilaskuri/utils/extensions.dart';
 import 'package:kalorilaskuri/widgets/date_bar.dart';
 
 class MealsPage extends StatefulWidget {
@@ -120,21 +119,8 @@ class _MealsPageState extends State<MealsPage> {
         MaterialPageRoute(builder: (context) => const SelectMealFromMenuPage()),
       );
     }
+    if (!mounted) return;
     setState(() {});
-  }
-
-  Future<void> _selectDate() async {
-    final DateTime? selectedDate = await showDatePicker(
-      context: context,
-      firstDate: DateTime(2026, 6, 1),
-      lastDate: DateTime.now(),
-    );
-
-    if (selectedDate != null) {
-      setState(() {
-        _date = selectedDate;
-      });
-    }
   }
 
   @override

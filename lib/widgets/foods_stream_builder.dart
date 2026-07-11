@@ -13,30 +13,54 @@ class FoodsStreamBuilder extends StatefulWidget {
 }
 
 class _FoodsStreamBuilderState extends State<FoodsStreamBuilder> {
+  String _searchText = '';
+
   @override
   Widget build(BuildContext context) {
-    return StreamBuilder<List<Food>>(
-      stream: FirebaseFirestore.instance
-          .collection('foods')
-          .where('type', isEqualTo: widget.type)
-          .snapshots()
-          .map((snapshot) => snapshot.docs.map(Food.fromFirestore).toList()),
-      builder: (context, snapshot) {
-        if (!snapshot.hasData) {
-          return const Center(child: CircularProgressIndicator());
-        }
-
-        final foods = snapshot.data!;
-
-        return ListView.builder(
-          itemCount: foods.length,
-          itemBuilder: (context, index) {
-            final food = foods[index];
-
-            return FoodCard(food: food);
+    return Column(
+      children: [
+        TextField(
+          decoration: const InputDecoration(
+            hintText: 'Hae...',
+            prefixIcon: Icon(Icons.search),
+          ),
+          onChanged: (value) {
+            setState(() {
+              _searchText = value;
+            });
           },
-        );
-      },
+        ),
+        Expanded(
+          child: StreamBuilder<List<Food>>(
+            stream: FirebaseFirestore.instance
+                .collection('foods')
+                .where('type', isEqualTo: widget.type)
+                .orderBy('searchName')
+                .startAt([_searchText.toLowerCase()])
+                .endAt(['${_searchText.toLowerCase()}\uf8ff'])
+                .snapshots()
+                .map(
+                  (snapshot) => snapshot.docs.map(Food.fromFirestore).toList(),
+                ),
+            builder: (context, snapshot) {
+              if (!snapshot.hasData) {
+                return const Center(child: CircularProgressIndicator());
+              }
+
+              final foods = snapshot.data!;
+
+              return ListView.builder(
+                itemCount: foods.length,
+                itemBuilder: (context, index) {
+                  final food = foods[index];
+
+                  return FoodCard(food: food);
+                },
+              );
+            },
+          ),
+        ),
+      ],
     );
   }
 }

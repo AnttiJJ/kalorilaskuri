@@ -3,6 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 class Food {
   final String name;
   final String type;
+  final String searchName;
   final int? caloriesPer100g;
   final int? caloriesPerPiece;
   final Map<String, int?>? caloriesPerSize;
@@ -13,12 +14,13 @@ class Food {
     required this.caloriesPer100g,
     required this.caloriesPerPiece,
     required this.caloriesPerSize,
-  });
+  }) : searchName = name.toLowerCase();
 
   Map<String, Object?> toMap() {
     return {
       'name': name,
       'type': type,
+      'searchName': searchName,
       'caloriesPer100g': caloriesPer100g,
       'caloriesPerPiece': caloriesPerPiece,
       'caloriesPerSize': caloriesPerSize,

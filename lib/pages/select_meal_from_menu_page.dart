@@ -16,6 +16,7 @@ class _AddMealFromMenuPageState extends State<SelectMealFromMenuPage> {
   String _type = 'Ateria';
   DocumentSnapshot<Map<String, dynamic>>? lastDoc;
   List<Food> foods = [];
+  String _searchText = '';
 
   @override
   void initState() {
@@ -33,7 +34,9 @@ class _AddMealFromMenuPageState extends State<SelectMealFromMenuPage> {
       Query<Map<String, dynamic>> query = FirebaseFirestore.instance
           .collection('foods')
           .where('type', isEqualTo: _type)
-          .orderBy('name')
+          .orderBy('searchName')
+          .startAt([_searchText.toLowerCase()])
+          .endAt(['${_searchText.toLowerCase()}\uf8ff'])
           .limit(pageSize);
 
       if (lastDoc != null && loadMore) {
@@ -121,6 +124,18 @@ class _AddMealFromMenuPageState extends State<SelectMealFromMenuPage> {
                   },
                 ),
               ],
+            ),
+            TextField(
+              decoration: const InputDecoration(
+                hintText: 'Hae...',
+                prefixIcon: Icon(Icons.search),
+              ),
+              onChanged: (value) {
+                setState(() {
+                  _searchText = value;
+                  loadFoodsFresh();
+                });
+              },
             ),
             Expanded(
               child: ListView.builder(
