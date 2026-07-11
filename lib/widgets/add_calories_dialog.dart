@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:kalorilaskuri/utils/extensions.dart';
 
 class AddCaloriesDialog extends StatefulWidget {
   const AddCaloriesDialog({super.key});
@@ -77,11 +78,7 @@ class _AddCaloriesDialogState extends State<AddCaloriesDialog> {
               width: double.infinity,
               child: OutlinedButton(
                 onPressed: selectDate,
-                child: Text(
-                  '${_selectedDate!.day.toString().padLeft(2, '0')}.'
-                  '${_selectedDate!.month.toString().padLeft(2, '0')}.'
-                  '${_selectedDate!.year}',
-                ),
+                child: Text(_selectedDate.formatDate),
               ),
             ),
           ],

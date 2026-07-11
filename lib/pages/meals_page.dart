@@ -6,6 +6,7 @@ import 'package:kalorilaskuri/pages/add_meal_page.dart';
 import 'package:kalorilaskuri/pages/update_meal_from_menu_page.dart';
 import 'package:kalorilaskuri/pages/update_meal_page.dart';
 import 'package:kalorilaskuri/utils/extensions.dart';
+import 'package:kalorilaskuri/widgets/date_bar.dart';
 
 class MealsPage extends StatefulWidget {
   const MealsPage({super.key});
@@ -17,8 +18,7 @@ class MealsPage extends StatefulWidget {
 class _MealsPageState extends State<MealsPage> {
   final SqfliteUtil sqfliteUtil = SqfliteUtil();
 
-  DateTime date = DateTime.now();
-  bool loading = true;
+  DateTime _date = DateTime.now();
 
   @override
   void initState() {
@@ -132,7 +132,7 @@ class _MealsPageState extends State<MealsPage> {
 
     if (selectedDate != null) {
       setState(() {
-        date = selectedDate;
+        _date = selectedDate;
       });
     }
   }
@@ -143,41 +143,48 @@ class _MealsPageState extends State<MealsPage> {
       body: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: [
-              IconButton(
-                onPressed: () {
-                  setState(() {
-                    date = date.subtract(const Duration(days: 1));
-                  });
-                },
-                icon: Icon(Icons.arrow_left),
-              ),
-              Row(
-                children: [
-                  IconButton(
-                    onPressed: () {
-                      _selectDate();
-                    },
-                    icon: Icon(Icons.calendar_month),
-                  ),
-                  Text(date.formatDate),
-                ],
-              ),
-              IconButton(
-                onPressed: () {
-                  setState(() {
-                    date = date.add(const Duration(days: 1));
-                  });
-                },
-                icon: Icon(Icons.arrow_right),
-              ),
-            ],
+          // Row(
+          //   mainAxisAlignment: MainAxisAlignment.spaceAround,
+          //   children: [
+          //     IconButton(
+          //       onPressed: () {
+          //         setState(() {
+          //           _date = _date.subtract(const Duration(days: 1));
+          //         });
+          //       },
+          //       icon: Icon(Icons.arrow_left),
+          //     ),
+          //     Row(
+          //       children: [
+          //         IconButton(
+          //           onPressed: () {
+          //             _selectDate();
+          //           },
+          //           icon: Icon(Icons.calendar_month),
+          //         ),
+          //         Text(_date.formatDate),
+          //       ],
+          //     ),
+          //     IconButton(
+          //       onPressed: () {
+          //         setState(() {
+          //           _date = _date.add(const Duration(days: 1));
+          //         });
+          //       },
+          //       icon: Icon(Icons.arrow_right),
+          //     ),
+          //   ],
+          // ),
+          DateBar(
+            onDateChanged: (newDate) {
+              setState(() {
+                _date = newDate;
+              });
+            },
           ),
           Expanded(
             child: FutureBuilder<List<Meal>>(
-              future: sqfliteUtil.getMeals(date),
+              future: sqfliteUtil.getMeals(_date),
               builder: (context, snapshot) {
                 if (!snapshot.hasData) {
                   return const CircularProgressIndicator();

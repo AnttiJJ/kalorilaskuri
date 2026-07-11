@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:kalorilaskuri/db/daily_calories.dart';
 import 'package:kalorilaskuri/db/food.dart';
 import 'package:kalorilaskuri/utils/extensions.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -15,7 +16,7 @@ class FirestoreUtil {
       final prefs = await SharedPreferences.getInstance();
       final user = prefs.getString('user');
       final date = Timestamp.fromDate(datetime);
-      String id = await createId(datetime);
+      final id = await createId(datetime);
 
       final doc = await db.collection('calories').doc(id).get();
 
@@ -81,6 +82,18 @@ class FirestoreUtil {
         : calories;
 
     return newCalories;
+  }
+
+  Future<DailyCalories?> getCaloriesDay(DateTime datetime) async {
+    try {
+      final id = await createId(datetime);
+      final doc = await db.collection('calories').doc(id).get();
+      final DailyCalories dailyCalories = DailyCalories.fromFirestore(doc);
+
+      return dailyCalories;
+    } catch (e) {
+      rethrow;
+    }
   }
 
   // ***************************

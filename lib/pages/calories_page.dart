@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:kalorilaskuri/db/firestore_util.dart';
 import 'package:kalorilaskuri/widgets/add_calories_dialog.dart';
+import 'package:kalorilaskuri/widgets/calories_daily_widget.dart';
 
 class CaloriesPage extends StatefulWidget {
   const CaloriesPage({super.key});
@@ -37,9 +38,9 @@ class _CaloriesPageState extends State<CaloriesPage> {
             ],
           ),
         ),
-        body: const TabBarView(
+        body: TabBarView(
           children: <Widget>[
-            Center(child: Text('Päivä')),
+            CaloriesDailyWidget(),
             Center(child: Text('Viikko')),
             Center(child: Text('Kuukausi')),
           ],
