@@ -1,9 +1,26 @@
 import 'package:flutter/material.dart';
+import 'package:kalorilaskuri/db/firestore_util.dart';
+import 'package:kalorilaskuri/widgets/add_calories_dialog.dart';
 
-class CaloriesPage extends StatelessWidget {
+class CaloriesPage extends StatefulWidget {
   const CaloriesPage({super.key});
 
-  void _addCalories() {}
+  @override
+  State<CaloriesPage> createState() => _CaloriesPageState();
+}
+
+class _CaloriesPageState extends State<CaloriesPage> {
+  Future<void> _addCalories(int calories, DateTime datetime) async {
+    try {
+      final FirestoreUtil firestoreUtil = FirestoreUtil();
+      await firestoreUtil.addCalories(calories, 'Kulutettu', datetime);
+
+      if (!mounted) return;
+    } catch (e) {
+      print(e);
+      return;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -28,7 +45,19 @@ class CaloriesPage extends StatelessWidget {
           ],
         ),
         floatingActionButton: FloatingActionButton(
-          onPressed: _addCalories,
+          onPressed: () async {
+            final result = await showDialog<Map<String, dynamic>>(
+              context: context,
+              builder: (_) => const AddCaloriesDialog(),
+            );
+
+            if (result != null) {
+              final calories = result['calories'] as int;
+              final date = result['date'] as DateTime;
+
+              await _addCalories(calories, date);
+            }
+          },
           tooltip: 'Increment',
           child: const Icon(Icons.add),
         ),
