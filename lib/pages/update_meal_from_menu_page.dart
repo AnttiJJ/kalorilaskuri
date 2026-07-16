@@ -134,185 +134,189 @@ class _UpdateMealFromMenuPageState extends State<UpdateMealFromMenuPage> {
         title: const Text('Muokkaa ateriaa'),
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
       ),
-      body: Padding(
-        padding: EdgeInsetsGeometry.all(20),
-        child: Column(
-          children: [
-            if (loading)
-              const CircularProgressIndicator()
-            else ...[
-              Center(child: Text(food!.name, style: TextStyle(fontSize: 28))),
-              SizedBox(height: 30),
-              Form(
-                key: _formKey,
-                child: Column(
-                  children: [
-                    if (food!.caloriesPer100g != null)
-                      Column(
-                        children: [
-                          Center(
-                            child: Text(
-                              '${food!.caloriesPer100g!.toString()} kcal/100g',
-                              style: _mealSizeType != 'Paino'
-                                  ? TextStyle(color: Colors.grey)
-                                  : null,
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: EdgeInsetsGeometry.all(20),
+          child: Column(
+            children: [
+              if (loading)
+                const CircularProgressIndicator()
+              else ...[
+                Center(child: Text(food!.name, style: TextStyle(fontSize: 28))),
+                SizedBox(height: 30),
+                Form(
+                  key: _formKey,
+                  child: Column(
+                    children: [
+                      if (food!.caloriesPer100g != null)
+                        Column(
+                          children: [
+                            Center(
+                              child: Text(
+                                '${food!.caloriesPer100g!.toString()} kcal/100g',
+                                style: _mealSizeType != 'Paino'
+                                    ? TextStyle(color: Colors.grey)
+                                    : null,
+                              ),
                             ),
-                          ),
-                          Row(
-                            children: [
-                              Expanded(
-                                child: SwitchListTile(
-                                  title: const Text('Paino'),
-                                  value: _mealSizeType == 'Paino',
-                                  onChanged: (value) {
-                                    setState(() {
-                                      _mealSizeType = 'Paino';
-                                    });
-                                  },
-                                ),
-                              ),
-                              Expanded(
-                                child: TextFormField(
-                                  controller: _weightController,
-                                  keyboardType: TextInputType.number,
-                                  inputFormatters: [
-                                    FilteringTextInputFormatter.digitsOnly,
-                                  ],
-                                  enabled: _mealSizeType == 'Paino',
-                                  decoration: const InputDecoration(
-                                    labelText: 'g',
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: SwitchListTile(
+                                    title: const Text('Paino'),
+                                    value: _mealSizeType == 'Paino',
+                                    onChanged: (value) {
+                                      setState(() {
+                                        _mealSizeType = 'Paino';
+                                      });
+                                    },
                                   ),
-                                  validator: (value) {
-                                    if (_mealSizeType != 'Paino') {
-                                      return null;
-                                    }
-
-                                    if (value == null || value.isEmpty) {
-                                      return 'Anna paino';
-                                    }
-
-                                    final number = int.tryParse(value);
-
-                                    if (number == null || number <= 0) {
-                                      return 'Anna paino positiivisena lukuna';
-                                    }
-
-                                    return null;
-                                  },
                                 ),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    SizedBox(height: 20),
-                    if (food!.caloriesPerPiece != null)
-                      Column(
-                        children: [
-                          Center(
-                            child: Text(
-                              '${food!.caloriesPerPiece!.toString()} kcal/kpl',
-                              style: _mealSizeType != 'Määrä'
-                                  ? TextStyle(color: Colors.grey)
-                                  : null,
+                                Expanded(
+                                  child: TextFormField(
+                                    controller: _weightController,
+                                    keyboardType: TextInputType.number,
+                                    inputFormatters: [
+                                      FilteringTextInputFormatter.digitsOnly,
+                                    ],
+                                    enabled: _mealSizeType == 'Paino',
+                                    decoration: const InputDecoration(
+                                      labelText: 'g',
+                                    ),
+                                    validator: (value) {
+                                      if (_mealSizeType != 'Paino') {
+                                        return null;
+                                      }
+
+                                      if (value == null || value.isEmpty) {
+                                        return 'Anna paino';
+                                      }
+
+                                      final number = int.tryParse(value);
+
+                                      if (number == null || number <= 0) {
+                                        return 'Anna paino positiivisena lukuna';
+                                      }
+
+                                      return null;
+                                    },
+                                  ),
+                                ),
+                              ],
                             ),
-                          ),
-                          Row(
-                            children: [
-                              Expanded(
-                                child: SwitchListTile(
-                                  title: const Text('Määrä'),
-                                  value: _mealSizeType == 'Määrä',
-                                  onChanged: (value) {
-                                    setState(() {
-                                      _mealSizeType = 'Määrä';
-                                    });
-                                  },
-                                ),
+                          ],
+                        ),
+                      SizedBox(height: 20),
+                      if (food!.caloriesPerPiece != null)
+                        Column(
+                          children: [
+                            Center(
+                              child: Text(
+                                '${food!.caloriesPerPiece!.toString()} kcal/kpl',
+                                style: _mealSizeType != 'Määrä'
+                                    ? TextStyle(color: Colors.grey)
+                                    : null,
                               ),
-                              Expanded(
-                                child: TextFormField(
-                                  controller: _amountController,
-                                  keyboardType: TextInputType.number,
-                                  inputFormatters: [
-                                    FilteringTextInputFormatter.digitsOnly,
-                                  ],
-                                  enabled: _mealSizeType == 'Määrä',
-                                  decoration: const InputDecoration(
-                                    labelText: 'kpl',
+                            ),
+                            Row(
+                              children: [
+                                Expanded(
+                                  child: SwitchListTile(
+                                    title: const Text('Määrä'),
+                                    value: _mealSizeType == 'Määrä',
+                                    onChanged: (value) {
+                                      setState(() {
+                                        _mealSizeType = 'Määrä';
+                                      });
+                                    },
                                   ),
-                                  validator: (value) {
-                                    if (_mealSizeType != 'Määrä') {
-                                      return null;
-                                    }
-
-                                    if (value == null || value.isEmpty) {
-                                      return 'Anna määrä';
-                                    }
-
-                                    final number = int.tryParse(value);
-
-                                    if (number == null || number <= 0) {
-                                      return 'Anna määrä positiivisena lukuna';
-                                    }
-
-                                    return null;
-                                  },
                                 ),
-                              ),
-                            ],
-                          ),
-                        ],
+                                Expanded(
+                                  child: TextFormField(
+                                    controller: _amountController,
+                                    keyboardType: TextInputType.number,
+                                    inputFormatters: [
+                                      FilteringTextInputFormatter.digitsOnly,
+                                    ],
+                                    enabled: _mealSizeType == 'Määrä',
+                                    decoration: const InputDecoration(
+                                      labelText: 'kpl',
+                                    ),
+                                    validator: (value) {
+                                      if (_mealSizeType != 'Määrä') {
+                                        return null;
+                                      }
+
+                                      if (value == null || value.isEmpty) {
+                                        return 'Anna määrä';
+                                      }
+
+                                      final number = int.tryParse(value);
+
+                                      if (number == null || number <= 0) {
+                                        return 'Anna määrä positiivisena lukuna';
+                                      }
+
+                                      return null;
+                                    },
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      SizedBox(height: 30),
+                      if (food!.caloriesPerSize != null)
+                        Column(
+                          children: [
+                            Text('Annokset', style: TextStyle(fontSize: 20)),
+                            SizedBox(height: 20),
+                            SegmentedButton(
+                              segments: [
+                                ButtonSegment(
+                                  value: 'Pieni',
+                                  enabled:
+                                      food!.caloriesPerSize!['Pieni'] != null,
+                                  label: const Text('Pieni'),
+                                ),
+                                ButtonSegment(
+                                  value: 'Normaali',
+                                  enabled:
+                                      food!.caloriesPerSize!['Normaali'] !=
+                                      null,
+                                  label: const Text('Normaali'),
+                                ),
+                                ButtonSegment(
+                                  value: 'Iso',
+                                  enabled:
+                                      food!.caloriesPerSize!['Iso'] != null,
+                                  label: const Text('Iso'),
+                                ),
+                              ],
+                              selected: {_mealSizeType},
+                              onSelectionChanged: (selection) {
+                                setState(() {
+                                  _mealSizeType = selection.first;
+                                });
+                              },
+                            ),
+                          ],
+                        ),
+                      SizedBox(height: 50),
+                      ElevatedButton(
+                        onPressed: () {
+                          if (_formKey.currentState!.validate()) {
+                            saveMeal();
+                          }
+                        },
+                        child: const Text('Tallenna'),
                       ),
-                    SizedBox(height: 30),
-                    if (food!.caloriesPerSize != null)
-                      Column(
-                        children: [
-                          Text('Annokset', style: TextStyle(fontSize: 20)),
-                          SizedBox(height: 20),
-                          SegmentedButton(
-                            segments: [
-                              ButtonSegment(
-                                value: 'Pieni',
-                                enabled:
-                                    food!.caloriesPerSize!['Pieni'] != null,
-                                label: const Text('Pieni'),
-                              ),
-                              ButtonSegment(
-                                value: 'Normaali',
-                                enabled:
-                                    food!.caloriesPerSize!['Normaali'] != null,
-                                label: const Text('Normaali'),
-                              ),
-                              ButtonSegment(
-                                value: 'Iso',
-                                enabled: food!.caloriesPerSize!['Iso'] != null,
-                                label: const Text('Iso'),
-                              ),
-                            ],
-                            selected: {_mealSizeType},
-                            onSelectionChanged: (selection) {
-                              setState(() {
-                                _mealSizeType = selection.first;
-                              });
-                            },
-                          ),
-                        ],
-                      ),
-                    SizedBox(height: 50),
-                    ElevatedButton(
-                      onPressed: () {
-                        if (_formKey.currentState!.validate()) {
-                          saveMeal();
-                        }
-                      },
-                      child: const Text('Tallenna'),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
+              ],
             ],
-          ],
+          ),
         ),
       ),
     );
