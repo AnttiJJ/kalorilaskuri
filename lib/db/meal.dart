@@ -2,17 +2,19 @@ import 'package:flutter/material.dart';
 
 class Meal {
   final int? id;
+  int? parentMealId;
   final String name;
   final int calories;
   final String type;
   final int? weight;
   final String? size;
   final int? amount;
-  final String createdAt;
+  String createdAt;
   final int fromMenu;
 
   Meal({
     this.id,
+    this.parentMealId,
     required this.name,
     required this.calories,
     required this.type,
@@ -26,6 +28,7 @@ class Meal {
   Map<String, Object?> toMap() {
     return {
       'id': id,
+      'parent_meal_id': parentMealId,
       'name': name,
       'calories': calories,
       'type': type,

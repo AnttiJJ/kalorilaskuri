@@ -129,38 +129,6 @@ class _MealsPageState extends State<MealsPage> {
       body: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          // Row(
-          //   mainAxisAlignment: MainAxisAlignment.spaceAround,
-          //   children: [
-          //     IconButton(
-          //       onPressed: () {
-          //         setState(() {
-          //           _date = _date.subtract(const Duration(days: 1));
-          //         });
-          //       },
-          //       icon: Icon(Icons.arrow_left),
-          //     ),
-          //     Row(
-          //       children: [
-          //         IconButton(
-          //           onPressed: () {
-          //             _selectDate();
-          //           },
-          //           icon: Icon(Icons.calendar_month),
-          //         ),
-          //         Text(_date.formatDate),
-          //       ],
-          //     ),
-          //     IconButton(
-          //       onPressed: () {
-          //         setState(() {
-          //           _date = _date.add(const Duration(days: 1));
-          //         });
-          //       },
-          //       icon: Icon(Icons.arrow_right),
-          //     ),
-          //   ],
-          // ),
           DateBar(
             onDateChanged: (newDate) {
               setState(() {

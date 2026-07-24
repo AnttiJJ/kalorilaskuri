@@ -11,9 +11,22 @@ class SqfliteUtil {
 
     _db = await openDatabase(
       join(await getDatabasesPath(), 'kalorilaskuri_database.db'),
+      onConfigure: (db) async {
+        await db.execute('PRAGMA foreign_keys = ON');
+      },
       onCreate: (db, version) {
         return db.execute(
-          'CREATE TABLE meals(id INTEGER PRIMARY KEY, name TEXT NOT NULL, calories INTEGER NOT NULL, type TEXT NOT NULL, weight INTEGER, size TEXT, amount INTEGER, created_at TEXT NOT NULL, from_menu INTEGER NOT NULL)',
+          'CREATE TABLE meals(id INTEGER PRIMARY KEY AUTOINCREMENT, '
+          'parent_meal_id INTEGER, '
+          'name TEXT NOT NULL, '
+          'calories INTEGER NOT NULL, '
+          'type TEXT NOT NULL, '
+          'weight INTEGER, '
+          'size TEXT, '
+          'amount INTEGER, '
+          'created_at TEXT NOT NULL, '
+          'from_menu INTEGER NOT NULL, '
+          'FOREIGN KEY (parent_meal_id) REFERENCES meals(id))',
         );
       },
       version: 1,
@@ -22,10 +35,10 @@ class SqfliteUtil {
     return _db!;
   }
 
-  Future<void> insertMeal(Meal meal) async {
+  Future<int> insertMeal(Meal meal) async {
     final db = await database;
 
-    await db.insert(
+    return await db.insert(
       'meals',
       meal.toMap(),
       conflictAlgorithm: ConflictAlgorithm.replace,
@@ -57,6 +70,7 @@ class SqfliteUtil {
     return [
       for (final {
             'id': id as int,
+            'parent_meal_id': parentMealId as int?,
             'name': name as String,
             'calories': calories as int,
             'type': type as String,
@@ -69,6 +83,7 @@ class SqfliteUtil {
           in mealMaps)
         Meal(
           id: id,
+          parentMealId: parentMealId,
           name: name,
           calories: calories,
           type: type,
