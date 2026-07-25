@@ -61,13 +61,21 @@ extension FoodFormExtension on Food {
   }
 }
 
-// Return pieni, normaali tai iso if selected, otherwise null
-extension MealSizeGetter on String {
+extension MealSizeExtension on String {
+  // Return pieni, normaali tai iso if selected, otherwise null
   String? get getMealSize {
     if (this != 'Paino' && this != 'Määrä') {
       return this;
     }
     return null;
+  }
+
+  int? getPossibleWeight(TextEditingController weightController) {
+    return this == 'Paino' ? int.parse(weightController.text) : null;
+  }
+
+  int? getPossibleAmount(TextEditingController amountController) {
+    return this == 'Määrä' ? int.parse(amountController.text) : null;
   }
 }
 

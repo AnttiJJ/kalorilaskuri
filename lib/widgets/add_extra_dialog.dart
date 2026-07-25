@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:kalorilaskuri/db/food.dart';
 import 'package:kalorilaskuri/db/meal.dart';
+import 'package:kalorilaskuri/utils/extensions.dart';
 import 'package:kalorilaskuri/widgets/form_calories_section.dart';
 
 class AddExtraDialog extends StatefulWidget {
@@ -34,34 +35,38 @@ class _AddExtraDialogState extends State<AddExtraDialog> {
     final type = _selectedFood!.type;
 
     DateTime date = DateTime.now();
-    int calories = 0;
-    int? weight;
-    int? amount;
-    String? size;
+    int? weight = _mealSizeType!.getPossibleWeight(_weightController);
+    int? amount = _mealSizeType!.getPossibleAmount(_amountController);
+    int calories = _selectedFood!.calculateCalories(
+      _mealSizeType!,
+      _amountController,
+      _weightController,
+    );
+    String? size = _mealSizeType!.getMealSize;
 
-    switch (_mealSizeType) {
-      case 'Paino':
-        weight = int.parse(_weightController.text);
-        calories = weight * _selectedFood!.caloriesPer100g! ~/ 100;
-        break;
-      case 'Määrä':
-        amount = int.parse(_amountController.text);
-        calories = amount * _selectedFood!.caloriesPerPiece!;
-        break;
-      case 'Pieni':
-        size = 'Pieni';
-        calories = _selectedFood!.caloriesPerSize!['Pieni']!;
-        break;
-      case 'Normaali':
-        size = 'Normaali';
-        calories = _selectedFood!.caloriesPerSize!['Normaali']!;
-        break;
-      case 'Iso':
-        size = 'Iso';
-        calories = _selectedFood!.caloriesPerSize!['Iso']!;
-        break;
-      default:
-    }
+    // switch (_mealSizeType) {
+    //   case 'Paino':
+    //     weight = int.parse(_weightController.text);
+    //     calories = weight * _selectedFood!.caloriesPer100g! ~/ 100;
+    //     break;
+    //   case 'Määrä':
+    //     amount = int.parse(_amountController.text);
+    //     calories = amount * _selectedFood!.caloriesPerPiece!;
+    //     break;
+    //   case 'Pieni':
+    //     size = 'Pieni';
+    //     calories = _selectedFood!.caloriesPerSize!['Pieni']!;
+    //     break;
+    //   case 'Normaali':
+    //     size = 'Normaali';
+    //     calories = _selectedFood!.caloriesPerSize!['Normaali']!;
+    //     break;
+    //   case 'Iso':
+    //     size = 'Iso';
+    //     calories = _selectedFood!.caloriesPerSize!['Iso']!;
+    //     break;
+    //   default:
+    // }
 
     final Meal meal = Meal(
       name: name,
@@ -139,6 +144,8 @@ class _AddExtraDialogState extends State<AddExtraDialog> {
                               onTap: () {
                                 setState(() {
                                   _selectedFood = food;
+                                  _mealSizeType =
+                                      _selectedFood!.primarySizeType;
                                 });
                               },
                             );

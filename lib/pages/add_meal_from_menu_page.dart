@@ -55,50 +55,18 @@ class _AddMealFromMenuPageState extends State<AddMealFromMenuPage> {
     final type = widget.food.type;
 
     DateTime date = DateTime.now();
-    int calories = 0;
-    int? weight = _weightController.text != '' && _mealSizeType == 'Paino'
-        ? int.parse(_weightController.text)
-        : null;
-    int? amount = _amountController.text != '' && _mealSizeType == 'Määrä'
-        ? int.parse(_amountController.text)
-        : null;
-    String? size;
-
-    if (!isSameDate(date, _datetime!)) {
-      date = _datetime!;
-    }
-
-    // switch (_mealSizeType) {
-    //   case 'Paino':
-    //     weight = int.parse(_weightController.text);
-    //     calories = weight * widget.food.caloriesPer100g! ~/ 100;
-    //     break;
-    //   case 'Määrä':
-    //     amount = int.parse(_amountController.text);
-    //     calories = amount * widget.food.caloriesPerPiece!;
-    //     break;
-    //   case 'Pieni':
-    //     size = 'Pieni';
-    //     calories = widget.food.caloriesPerSize!['Pieni']!;
-    //     break;
-    //   case 'Normaali':
-    //     size = 'Normaali';
-    //     calories = widget.food.caloriesPerSize!['Normaali']!;
-    //     break;
-    //   case 'Iso':
-    //     size = 'Iso';
-    //     calories = widget.food.caloriesPerSize!['Iso']!;
-    //     break;
-    //   default:
-    // }
-
-    calories = widget.food.calculateCalories(
+    int? weight = _mealSizeType!.getPossibleWeight(_weightController);
+    int? amount = _mealSizeType!.getPossibleAmount(_amountController);
+    int calories = widget.food.calculateCalories(
       _mealSizeType!,
       _amountController,
       _weightController,
     );
+    String? size = _mealSizeType!.getMealSize;
 
-    size = _mealSizeType!.getMealSize;
+    if (!isSameDate(date, _datetime!)) {
+      date = _datetime!;
+    }
 
     final Meal meal = Meal(
       name: name,
@@ -156,9 +124,6 @@ class _AddMealFromMenuPageState extends State<AddMealFromMenuPage> {
 
     final SqfliteUtil sqfliteUtil = SqfliteUtil();
     return await sqfliteUtil.insertMeal(meal);
-
-    // if (!mounted) return;
-    // Navigator.of(context).popUntil((route) => route.isFirst);
   }
 
   Future<void> selectDate() async {
@@ -243,160 +208,6 @@ class _AddMealFromMenuPageState extends State<AddMealFromMenuPage> {
                         });
                       },
                     ),
-                    // if (widget.food.caloriesPer100g != null)
-                    //   Column(
-                    //     children: [
-                    //       Center(
-                    //         child: Text(
-                    //           '${widget.food.caloriesPer100g!.toString()} kcal/100g',
-                    //           style: _mealSizeType != 'Paino'
-                    //               ? TextStyle(color: Colors.grey)
-                    //               : null,
-                    //         ),
-                    //       ),
-                    //       Row(
-                    //         children: [
-                    //           Expanded(
-                    //             child: SwitchListTile(
-                    //               title: const Text('Paino'),
-                    //               value: _mealSizeType == 'Paino',
-                    //               onChanged: (value) {
-                    //                 setState(() {
-                    //                   _mealSizeType = 'Paino';
-                    //                 });
-                    //               },
-                    //             ),
-                    //           ),
-                    //           Expanded(
-                    //             child: TextFormField(
-                    //               controller: _weightController,
-                    //               keyboardType: TextInputType.number,
-                    //               inputFormatters: [
-                    //                 FilteringTextInputFormatter.digitsOnly,
-                    //               ],
-                    //               enabled: _mealSizeType == 'Paino',
-                    //               decoration: const InputDecoration(
-                    //                 labelText: 'g',
-                    //               ),
-                    //               validator: (value) {
-                    //                 if (_mealSizeType != 'Paino') {
-                    //                   return null;
-                    //                 }
-
-                    //                 if (value == null || value.isEmpty) {
-                    //                   return 'Anna paino';
-                    //                 }
-
-                    //                 final number = int.tryParse(value);
-
-                    //                 if (number == null || number <= 0) {
-                    //                   return 'Anna paino positiivisena lukuna';
-                    //                 }
-
-                    //                 return null;
-                    //               },
-                    //             ),
-                    //           ),
-                    //         ],
-                    //       ),
-                    //     ],
-                    //   ),
-                    // SizedBox(height: 20),
-                    // if (widget.food.caloriesPerPiece != null)
-                    //   Column(
-                    //     children: [
-                    //       Center(
-                    //         child: Text(
-                    //           '${widget.food.caloriesPerPiece!.toString()} kcal/kpl',
-                    //           style: _mealSizeType != 'Määrä'
-                    //               ? TextStyle(color: Colors.grey)
-                    //               : null,
-                    //         ),
-                    //       ),
-                    //       Row(
-                    //         children: [
-                    //           Expanded(
-                    //             child: SwitchListTile(
-                    //               title: const Text('Määrä'),
-                    //               value: _mealSizeType == 'Määrä',
-                    //               onChanged: (value) {
-                    //                 setState(() {
-                    //                   _mealSizeType = 'Määrä';
-                    //                 });
-                    //               },
-                    //             ),
-                    //           ),
-                    //           Expanded(
-                    //             child: TextFormField(
-                    //               controller: _amountController,
-                    //               keyboardType: TextInputType.number,
-                    //               inputFormatters: [
-                    //                 FilteringTextInputFormatter.digitsOnly,
-                    //               ],
-                    //               enabled: _mealSizeType == 'Määrä',
-                    //               decoration: const InputDecoration(
-                    //                 labelText: 'kpl',
-                    //               ),
-                    //               validator: (value) {
-                    //                 if (_mealSizeType != 'Määrä') {
-                    //                   return null;
-                    //                 }
-
-                    //                 if (value == null || value.isEmpty) {
-                    //                   return 'Anna määrä';
-                    //                 }
-
-                    //                 final number = int.tryParse(value);
-
-                    //                 if (number == null || number <= 0) {
-                    //                   return 'Anna määrä positiivisena lukuna';
-                    //                 }
-
-                    //                 return null;
-                    //               },
-                    //             ),
-                    //           ),
-                    //         ],
-                    //       ),
-                    //     ],
-                    //   ),
-                    // SizedBox(height: 30),
-                    // if (widget.food.caloriesPerSize != null)
-                    //   Column(
-                    //     children: [
-                    //       Text('Annokset', style: TextStyle(fontSize: 20)),
-                    //       SizedBox(height: 20),
-                    //       SegmentedButton(
-                    //         segments: [
-                    //           ButtonSegment(
-                    //             value: 'Pieni',
-                    //             enabled:
-                    //                 widget.food.caloriesPerSize!['Pieni'] != null,
-                    //             label: const Text('Pieni'),
-                    //           ),
-                    //           ButtonSegment(
-                    //             value: 'Normaali',
-                    //             enabled:
-                    //                 widget.food.caloriesPerSize!['Normaali'] !=
-                    //                 null,
-                    //             label: const Text('Normaali'),
-                    //           ),
-                    //           ButtonSegment(
-                    //             value: 'Iso',
-                    //             enabled:
-                    //                 widget.food.caloriesPerSize!['Iso'] != null,
-                    //             label: const Text('Iso'),
-                    //           ),
-                    //         ],
-                    //         selected: {_mealSizeType},
-                    //         onSelectionChanged: (selection) {
-                    //           setState(() {
-                    //             _mealSizeType = selection.first;
-                    //           });
-                    //         },
-                    //       ),
-                    //     ],
-                    //   ),
                     SizedBox(height: 20),
                     SizedBox(
                       width: double.infinity,
