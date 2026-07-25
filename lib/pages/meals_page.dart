@@ -5,6 +5,7 @@ import 'package:kalorilaskuri/pages/select_meal_from_menu_page.dart';
 import 'package:kalorilaskuri/pages/add_meal_page.dart';
 import 'package:kalorilaskuri/pages/update_meal_from_menu_page.dart';
 import 'package:kalorilaskuri/pages/update_meal_page.dart';
+import 'package:kalorilaskuri/utils/extensions.dart';
 import 'package:kalorilaskuri/widgets/date_bar.dart';
 
 class MealsPage extends StatefulWidget {
@@ -18,13 +19,19 @@ class _MealsPageState extends State<MealsPage> {
   final SqfliteUtil sqfliteUtil = SqfliteUtil();
 
   DateTime _date = DateTime.now();
+  int _expandedMeal = -1;
+  List<Meal> parentMeals = [];
+  List<Meal> extras = [];
+  List<Meal> expandedMealsExtras = [];
+  Meal? expandedMealsDrink;
+  bool deleteInProgress = false;
 
   @override
   void initState() {
     super.initState();
   }
 
-  Future<void> deleteMeal(
+  Future<void> deleteMealDialog(
     int id,
     String name,
     int calories,
@@ -56,13 +63,38 @@ class _MealsPageState extends State<MealsPage> {
     );
 
     if (confirmDelete == true) {
-      try {
-        final SqfliteUtil sqfliteUtil = SqfliteUtil();
-        await sqfliteUtil.deleteMeal(id, calories, type, datetime);
-        setState(() {});
-      } catch (e) {
-        print(e);
+      setState(() {
+        deleteInProgress = true;
+      });
+
+      final List<Meal> deleteMealExtras = extras
+          .where((extra) => extra.parentMealId == id)
+          .toList();
+
+      for (final extra in deleteMealExtras) {
+        await deleteMeal(extra.id!, extra.calories, extra.type, datetime);
       }
+
+      await deleteMeal(id, calories, type, datetime);
+
+      setState(() {
+        deleteInProgress = false;
+      });
+    }
+  }
+
+  Future<void> deleteMeal(
+    int id,
+    int calories,
+    String type,
+    DateTime datetime,
+  ) async {
+    try {
+      final SqfliteUtil sqfliteUtil = SqfliteUtil();
+      await sqfliteUtil.deleteMeal(id, calories, type, datetime);
+      setState(() {});
+    } catch (e) {
+      print(e);
     }
   }
 
@@ -123,6 +155,29 @@ class _MealsPageState extends State<MealsPage> {
     setState(() {});
   }
 
+  int totalMealCalories(Meal meal) {
+    final List<Meal> mealsExtras = extras
+        .where((extra) => extra.parentMealId == meal.id)
+        .toList();
+
+    return meal.calories + mealsExtras.totalCalories;
+  }
+
+  void setExpandedMealsExtras(int expandedMealId) {
+    expandedMealsExtras = [];
+    expandedMealsDrink = null;
+
+    for (final extra in extras) {
+      if (extra.parentMealId != expandedMealId) continue;
+
+      if (extra.type == 'Lisuke') {
+        expandedMealsExtras.add(extra);
+      } else {
+        expandedMealsDrink = extra;
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -140,64 +195,141 @@ class _MealsPageState extends State<MealsPage> {
             child: FutureBuilder<List<Meal>>(
               future: sqfliteUtil.getMeals(_date),
               builder: (context, snapshot) {
-                if (!snapshot.hasData) {
+                if (!snapshot.hasData || deleteInProgress) {
                   return const CircularProgressIndicator();
                 }
 
                 final meals = snapshot.data!;
+                parentMeals = [];
+                extras = [];
+
+                for (final meal in meals) {
+                  if (meal.parentMealId != null) {
+                    extras.add(meal);
+                  } else {
+                    parentMeals.add(meal);
+                  }
+                }
 
                 return ListView.builder(
-                  itemCount: meals.length,
+                  itemCount: parentMeals.length,
                   itemBuilder: (context, index) {
                     return Card(
-                      child: ListTile(
-                        title: Text(meals[index].name),
-                        leading: meals[index].icon,
-                        trailing: Row(
-                          mainAxisSize: MainAxisSize.min,
+                      child: InkWell(
+                        onTap: () {
+                          setState(() {
+                            setExpandedMealsExtras(parentMeals[index].id!);
+                            if (_expandedMeal != index) {
+                              _expandedMeal = index;
+                            } else {
+                              _expandedMeal = -1;
+                            }
+                          });
+                        },
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            IconButton(
-                              onPressed: () async {
-                                await Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (context) {
-                                      if (meals[index].fromMenu != 1) {
-                                        return UpdateMealPage(
-                                          meal: meals[index],
-                                        );
-                                      } else {
-                                        return UpdateMealFromMenuPage(
-                                          meal: meals[index],
-                                        );
-                                      }
+                            ListTile(
+                              title: Text(parentMeals[index].name),
+                              leading: parentMeals[index].icon,
+                              trailing: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  IconButton(
+                                    onPressed: () async {
+                                      await Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (context) {
+                                            if (parentMeals[index].fromMenu !=
+                                                1) {
+                                              return UpdateMealPage(
+                                                meal: parentMeals[index],
+                                              );
+                                            } else {
+                                              return UpdateMealFromMenuPage(
+                                                meal: parentMeals[index],
+                                              );
+                                            }
+                                          },
+                                        ),
+                                      );
+                                      setState(() {});
                                     },
+                                    icon: Icon(Icons.mode, color: Colors.blue),
                                   ),
-                                );
-                                setState(() {});
-                              },
-                              icon: Icon(Icons.mode, color: Colors.blue),
-                            ),
-                            IconButton(
-                              onPressed: () => deleteMeal(
-                                meals[index].id!,
-                                meals[index].name,
-                                meals[index].calories,
-                                meals[index].type,
-                                DateTime.parse(meals[index].createdAt),
+                                  IconButton(
+                                    onPressed: () => deleteMealDialog(
+                                      parentMeals[index].id!,
+                                      parentMeals[index].name,
+                                      parentMeals[index].calories,
+                                      parentMeals[index].type,
+                                      DateTime.parse(
+                                        parentMeals[index].createdAt,
+                                      ),
+                                    ),
+                                    icon: Icon(Icons.delete, color: Colors.red),
+                                  ),
+                                ],
                               ),
-                              icon: Icon(Icons.delete, color: Colors.red),
-                            ),
-                          ],
-                        ),
-                        subtitle: Row(
-                          children: [
-                            Expanded(
-                              child: Text(
-                                '${meals[index].calories.toString()} kcal',
+                              subtitle: Row(
+                                children: [
+                                  Expanded(
+                                    child: Text(
+                                      totalMealCalories(parentMeals[index]) !=
+                                              parentMeals[index].calories
+                                          ? '${totalMealCalories(parentMeals[index])} (${parentMeals[index].calories.toString()}) kcal'
+                                          : '${parentMeals[index].calories.toString()} kcal',
+                                    ),
+                                  ),
+                                  Expanded(
+                                    child: Text(parentMeals[index].mealSize),
+                                  ),
+                                ],
                               ),
                             ),
-                            Expanded(child: Text(meals[index].mealSize)),
+                            if (_expandedMeal == index &&
+                                (expandedMealsExtras.isNotEmpty ||
+                                    expandedMealsDrink != null))
+                              Padding(
+                                padding: EdgeInsetsGeometry.fromLTRB(
+                                  57,
+                                  0,
+                                  16,
+                                  16,
+                                ),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    if (expandedMealsExtras.isNotEmpty)
+                                      Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text('Lisukkeet:'),
+                                          for (final extra
+                                              in expandedMealsExtras)
+                                            Text(
+                                              '${extra.name} ${extra.calories}',
+                                            ),
+                                        ],
+                                      ),
+
+                                    if (expandedMealsDrink != null)
+                                      Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          SizedBox(height: 10),
+                                          Text('Juoma:'),
+                                          Text(
+                                            '${expandedMealsDrink!.name} ${expandedMealsDrink!.calories}',
+                                          ),
+                                        ],
+                                      ),
+                                  ],
+                                ),
+                              ),
                           ],
                         ),
                       ),
