@@ -4,6 +4,7 @@ import 'package:kalorilaskuri/db/firestore_util.dart';
 import 'package:kalorilaskuri/db/food.dart';
 import 'package:kalorilaskuri/db/meal.dart';
 import 'package:kalorilaskuri/db/sqflite_util.dart';
+import 'package:kalorilaskuri/utils/extensions.dart';
 import 'package:kalorilaskuri/widgets/add_extra_button.dart';
 import 'package:kalorilaskuri/widgets/add_extra_dialog.dart';
 import 'package:kalorilaskuri/widgets/extras_list.dart';
@@ -27,10 +28,18 @@ class _AddMealFromMenuPageState extends State<AddMealFromMenuPage> {
   DateTime? _datetime;
   List<Meal> extras = [];
   Meal? drink;
+  bool mealSizeTypeEnabled = false;
 
   @override
   void initState() {
+    _amountController.addListener(() {
+      setState(() {});
+    });
+    _weightController.addListener(() {
+      setState(() {});
+    });
     _datetime = DateTime.now();
+    _mealSizeType = widget.food.primarySizeType;
     super.initState();
   }
 
@@ -47,37 +56,49 @@ class _AddMealFromMenuPageState extends State<AddMealFromMenuPage> {
 
     DateTime date = DateTime.now();
     int calories = 0;
-    int? weight;
-    int? amount;
+    int? weight = _weightController.text != '' && _mealSizeType == 'Paino'
+        ? int.parse(_weightController.text)
+        : null;
+    int? amount = _amountController.text != '' && _mealSizeType == 'Määrä'
+        ? int.parse(_amountController.text)
+        : null;
     String? size;
 
     if (!isSameDate(date, _datetime!)) {
       date = _datetime!;
     }
 
-    switch (_mealSizeType) {
-      case 'Paino':
-        weight = int.parse(_weightController.text);
-        calories = weight * widget.food.caloriesPer100g! ~/ 100;
-        break;
-      case 'Määrä':
-        amount = int.parse(_amountController.text);
-        calories = amount * widget.food.caloriesPerPiece!;
-        break;
-      case 'Pieni':
-        size = 'Pieni';
-        calories = widget.food.caloriesPerSize!['Pieni']!;
-        break;
-      case 'Normaali':
-        size = 'Normaali';
-        calories = widget.food.caloriesPerSize!['Normaali']!;
-        break;
-      case 'Iso':
-        size = 'Iso';
-        calories = widget.food.caloriesPerSize!['Iso']!;
-        break;
-      default:
-    }
+    // switch (_mealSizeType) {
+    //   case 'Paino':
+    //     weight = int.parse(_weightController.text);
+    //     calories = weight * widget.food.caloriesPer100g! ~/ 100;
+    //     break;
+    //   case 'Määrä':
+    //     amount = int.parse(_amountController.text);
+    //     calories = amount * widget.food.caloriesPerPiece!;
+    //     break;
+    //   case 'Pieni':
+    //     size = 'Pieni';
+    //     calories = widget.food.caloriesPerSize!['Pieni']!;
+    //     break;
+    //   case 'Normaali':
+    //     size = 'Normaali';
+    //     calories = widget.food.caloriesPerSize!['Normaali']!;
+    //     break;
+    //   case 'Iso':
+    //     size = 'Iso';
+    //     calories = widget.food.caloriesPerSize!['Iso']!;
+    //     break;
+    //   default:
+    // }
+
+    calories = widget.food.calculateCalories(
+      _mealSizeType!,
+      _amountController,
+      _weightController,
+    );
+
+    size = _mealSizeType!.getMealSize;
 
     final Meal meal = Meal(
       name: name,
@@ -98,8 +119,7 @@ class _AddMealFromMenuPageState extends State<AddMealFromMenuPage> {
 
       for (final extra in extras) {
         extra.parentMealId = mealId;
-        extra.createdAt = date
-            .toIso8601String(); // Set date to be same as parent meals
+        extra.createdAt = date.toIso8601String(); // Set date to selected date
 
         await saveMealToDatabase(extra);
       }
@@ -110,6 +130,20 @@ class _AddMealFromMenuPageState extends State<AddMealFromMenuPage> {
 
     if (!mounted) return;
     Navigator.of(context).popUntil((route) => route.isFirst);
+  }
+
+  int calculateTotalCalories() {
+    int calories = widget.food.calculateCalories(
+      _mealSizeType!,
+      _amountController,
+      _weightController,
+    );
+
+    calories += extras.totalCalories;
+
+    if (drink != null) calories += drink!.calories;
+
+    return calories;
   }
 
   Future<int> saveMealToDatabase(Meal meal) async {
@@ -402,7 +436,13 @@ class _AddMealFromMenuPageState extends State<AddMealFromMenuPage> {
                           showExtraDialog('Juoma');
                         },
                       ),
-                    SizedBox(height: 50),
+                    SizedBox(height: 20),
+                    Text('Kalorit:'),
+                    Text(
+                      calculateTotalCalories().toString(),
+                      style: TextStyle(fontSize: 26),
+                    ),
+                    SizedBox(height: 30),
                     ElevatedButton(
                       onPressed: () {
                         if (_formKey.currentState!.validate()) {
