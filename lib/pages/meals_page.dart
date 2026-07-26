@@ -22,8 +22,8 @@ class _MealsPageState extends State<MealsPage> {
   int _expandedMeal = -1;
   List<Meal> parentMeals = [];
   List<Meal> extras = [];
-  List<Meal> expandedMealsExtras = [];
-  Meal? expandedMealsDrink;
+  List<Meal> _mealsExtras = [];
+  Meal? _mealsDrink;
   bool deleteInProgress = false;
 
   @override
@@ -92,7 +92,6 @@ class _MealsPageState extends State<MealsPage> {
     try {
       final SqfliteUtil sqfliteUtil = SqfliteUtil();
       await sqfliteUtil.deleteMeal(id, calories, type, datetime);
-      setState(() {});
     } catch (e) {
       print(e);
     }
@@ -163,19 +162,43 @@ class _MealsPageState extends State<MealsPage> {
     return meal.calories + mealsExtras.totalCalories;
   }
 
-  void setExpandedMealsExtras(int expandedMealId) {
-    expandedMealsExtras = [];
-    expandedMealsDrink = null;
+  void setMealsExtras(int expandedMealId) {
+    _mealsExtras = [];
+    _mealsDrink = null;
 
     for (final extra in extras) {
       if (extra.parentMealId != expandedMealId) continue;
 
       if (extra.type == 'Lisuke') {
-        expandedMealsExtras.add(extra);
+        _mealsExtras.add(extra);
       } else {
-        expandedMealsDrink = extra;
+        _mealsDrink = extra;
       }
     }
+  }
+
+  Future<void> updateMeal(Meal meal) async {
+    setMealsExtras(meal.id!);
+
+    await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) {
+          if (meal.fromMenu != 1) {
+            return UpdateMealPage(meal: meal);
+          } else {
+            return UpdateMealFromMenuPage(
+              meal: meal,
+              extras: _mealsExtras,
+              drink: _mealsDrink,
+            );
+          }
+        },
+      ),
+    );
+
+    if (!mounted) return;
+    setState(() {});
   }
 
   @override
@@ -218,7 +241,7 @@ class _MealsPageState extends State<MealsPage> {
                       child: InkWell(
                         onTap: () {
                           setState(() {
-                            setExpandedMealsExtras(parentMeals[index].id!);
+                            setMealsExtras(parentMeals[index].id!);
                             if (_expandedMeal != index) {
                               _expandedMeal = index;
                             } else {
@@ -237,24 +260,25 @@ class _MealsPageState extends State<MealsPage> {
                                 children: [
                                   IconButton(
                                     onPressed: () async {
-                                      await Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                          builder: (context) {
-                                            if (parentMeals[index].fromMenu !=
-                                                1) {
-                                              return UpdateMealPage(
-                                                meal: parentMeals[index],
-                                              );
-                                            } else {
-                                              return UpdateMealFromMenuPage(
-                                                meal: parentMeals[index],
-                                              );
-                                            }
-                                          },
-                                        ),
-                                      );
-                                      setState(() {});
+                                      await updateMeal(parentMeals[index]);
+                                      // await Navigator.push(
+                                      //   context,
+                                      //   MaterialPageRoute(
+                                      //     builder: (context) {
+                                      //       if (parentMeals[index].fromMenu !=
+                                      //           1) {
+                                      //         return UpdateMealPage(
+                                      //           meal: parentMeals[index],
+                                      //         );
+                                      //       } else {
+                                      //         return UpdateMealFromMenuPage(
+                                      //           meal: parentMeals[index],
+                                      //         );
+                                      //       }
+                                      //     },
+                                      //   ),
+                                      // );
+                                      // setState(() {});
                                     },
                                     icon: Icon(Icons.mode, color: Colors.blue),
                                   ),
@@ -289,8 +313,8 @@ class _MealsPageState extends State<MealsPage> {
                               ),
                             ),
                             if (_expandedMeal == index &&
-                                (expandedMealsExtras.isNotEmpty ||
-                                    expandedMealsDrink != null))
+                                (_mealsExtras.isNotEmpty ||
+                                    _mealsDrink != null))
                               Padding(
                                 padding: EdgeInsetsGeometry.fromLTRB(
                                   57,
@@ -301,14 +325,13 @@ class _MealsPageState extends State<MealsPage> {
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    if (expandedMealsExtras.isNotEmpty)
+                                    if (_mealsExtras.isNotEmpty)
                                       Column(
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
                                         children: [
                                           Text('Lisukkeet:'),
-                                          for (final extra
-                                              in expandedMealsExtras)
+                                          for (final extra in _mealsExtras)
                                             Row(
                                               mainAxisAlignment:
                                                   MainAxisAlignment
@@ -325,7 +348,7 @@ class _MealsPageState extends State<MealsPage> {
                                         ],
                                       ),
 
-                                    if (expandedMealsDrink != null)
+                                    if (_mealsDrink != null)
                                       Column(
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
@@ -336,10 +359,10 @@ class _MealsPageState extends State<MealsPage> {
                                                 MainAxisAlignment.spaceBetween,
                                             children: [
                                               Text(
-                                                '${expandedMealsDrink!.name} ${expandedMealsDrink!.mealSizeShort}',
+                                                '${_mealsDrink!.name} ${_mealsDrink!.mealSizeShort}',
                                               ),
                                               Text(
-                                                '${expandedMealsDrink!.calories} kcal',
+                                                '${_mealsDrink!.calories} kcal',
                                               ),
                                             ],
                                           ),
