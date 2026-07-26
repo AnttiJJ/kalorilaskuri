@@ -185,7 +185,11 @@ class _MealsPageState extends State<MealsPage> {
       MaterialPageRoute(
         builder: (context) {
           if (meal.fromMenu != 1) {
-            return UpdateMealPage(meal: meal);
+            return UpdateMealPage(
+              meal: meal,
+              extras: _mealsExtras,
+              drink: _mealsDrink,
+            );
           } else {
             return UpdateMealFromMenuPage(
               meal: meal,
@@ -261,24 +265,6 @@ class _MealsPageState extends State<MealsPage> {
                                   IconButton(
                                     onPressed: () async {
                                       await updateMeal(parentMeals[index]);
-                                      // await Navigator.push(
-                                      //   context,
-                                      //   MaterialPageRoute(
-                                      //     builder: (context) {
-                                      //       if (parentMeals[index].fromMenu !=
-                                      //           1) {
-                                      //         return UpdateMealPage(
-                                      //           meal: parentMeals[index],
-                                      //         );
-                                      //       } else {
-                                      //         return UpdateMealFromMenuPage(
-                                      //           meal: parentMeals[index],
-                                      //         );
-                                      //       }
-                                      //     },
-                                      //   ),
-                                      // );
-                                      // setState(() {});
                                     },
                                     icon: Icon(Icons.mode, color: Colors.blue),
                                   ),

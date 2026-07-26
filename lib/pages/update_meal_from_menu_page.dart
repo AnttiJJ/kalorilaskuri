@@ -36,6 +36,7 @@ class _UpdateMealFromMenuPageState extends State<UpdateMealFromMenuPage> {
   bool loading = true;
   List<Meal> _extras = [];
   Meal? _drink;
+  // ignore: prefer_final_fields
   List<Meal> _deletedExtras = [];
 
   @override
@@ -89,15 +90,14 @@ class _UpdateMealFromMenuPageState extends State<UpdateMealFromMenuPage> {
     final name = _food!.name;
     final type = _food!.type;
     final date = widget.meal.createdAt;
-
-    int? weight = _mealSizeType!.getPossibleWeight(_weightController);
-    int? amount = _mealSizeType!.getPossibleAmount(_amountController);
-    int calories = _food!.calculateCalories(
+    final int? weight = _mealSizeType!.getPossibleWeight(_weightController);
+    final int? amount = _mealSizeType!.getPossibleAmount(_amountController);
+    final int calories = _food!.calculateCalories(
       _mealSizeType!,
       _amountController,
       _weightController,
     );
-    String? size = _mealSizeType!.getMealSize;
+    final String? size = _mealSizeType!.getMealSize;
 
     final Meal updatedMeal = Meal(
       id: widget.meal.id,
