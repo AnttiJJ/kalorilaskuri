@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:kalorilaskuri/db/firestore_util.dart';
 import 'package:kalorilaskuri/db/food.dart';
 import 'package:kalorilaskuri/db/meal.dart';
@@ -28,7 +27,6 @@ class _AddMealFromMenuPageState extends State<AddMealFromMenuPage> {
   DateTime? _datetime;
   List<Meal> extras = [];
   Meal? drink;
-  bool mealSizeTypeEnabled = false;
 
   @override
   void initState() {

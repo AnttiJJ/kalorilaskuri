@@ -3,6 +3,10 @@ import 'package:flutter/services.dart';
 import 'package:kalorilaskuri/db/firestore_util.dart';
 import 'package:kalorilaskuri/db/meal.dart';
 import 'package:kalorilaskuri/db/sqflite_util.dart';
+import 'package:kalorilaskuri/utils/extensions.dart';
+import 'package:kalorilaskuri/widgets/add_extra_button.dart';
+import 'package:kalorilaskuri/widgets/add_extra_dialog.dart';
+import 'package:kalorilaskuri/widgets/extras_list.dart';
 
 class AddMealPage extends StatefulWidget {
   const AddMealPage({super.key});
@@ -22,10 +26,16 @@ class _AddMealPageState extends State<AddMealPage> {
   String _mealSizeType = 'Paino';
   String? _mealSize;
   DateTime? _datetime;
+  // ignore: prefer_final_fields
+  List<Meal> _extras = [];
+  Meal? _drink;
 
   @override
   void initState() {
     _datetime = DateTime.now();
+    _caloriesController.addListener(() {
+      setState(() {});
+    });
     super.initState();
   }
 
@@ -41,13 +51,9 @@ class _AddMealPageState extends State<AddMealPage> {
   Future<void> saveMeal() async {
     final name = _nameController.text;
     final calories = int.parse(_caloriesController.text);
-    final weight = _mealSizeType == 'Paino'
-        ? int.parse(_weightController.text)
-        : null;
+    final weight = _mealSizeType.getPossibleWeight(_weightController);
+    final amount = _mealSizeType.getPossibleAmount(_amountController);
     final size = _mealSizeType == 'Koko' ? _mealSize : null;
-    final amount = _mealSizeType == 'Määrä'
-        ? int.parse(_amountController.text)
-        : null;
 
     DateTime date = DateTime.now();
 
@@ -66,19 +72,37 @@ class _AddMealPageState extends State<AddMealPage> {
       fromMenu: 0,
     );
 
+    // Add drink to extras for saving
+    if (_drink != null) _extras.add(_drink!);
+
     try {
-      final FirestoreUtil firestoreUtil = FirestoreUtil();
-      await firestoreUtil.addCalories(calories, _type, date);
+      final mealId = await saveMealToDatabase(meal);
 
-      final SqfliteUtil sqfliteUtil = SqfliteUtil();
-      await sqfliteUtil.insertMeal(meal);
+      for (final extra in _extras) {
+        extra.parentMealId = mealId;
+        extra.createdAt = date.toIso8601String(); // Set date to selected date
 
-      if (!mounted) return;
-      Navigator.pop(context);
+        await saveMealToDatabase(extra);
+      }
     } catch (e) {
       print(e);
       return;
     }
+
+    if (!mounted) return;
+    Navigator.pop(context);
+  }
+
+  Future<int> saveMealToDatabase(Meal meal) async {
+    final FirestoreUtil firestoreUtil = FirestoreUtil();
+    await firestoreUtil.addCalories(
+      meal.calories,
+      meal.type,
+      DateTime.parse(meal.createdAt),
+    );
+
+    final SqfliteUtil sqfliteUtil = SqfliteUtil();
+    return await sqfliteUtil.insertMeal(meal);
   }
 
   Future<void> selectDate() async {
@@ -98,6 +122,38 @@ class _AddMealPageState extends State<AddMealPage> {
 
   bool isSameDate(DateTime a, DateTime b) {
     return a.year == b.year && a.month == b.month && a.day == b.day;
+  }
+
+  Future<void> showExtraDialog(String type) async {
+    Meal? extra = await showDialog<Meal?>(
+      context: context,
+      builder: (_) => AddExtraDialog(type: type),
+    );
+
+    if (extra == null) return;
+
+    if (extra.type == 'Lisuke') {
+      setState(() {
+        _extras.add(extra);
+      });
+    } else {
+      setState(() {
+        _drink = extra;
+      });
+    }
+  }
+
+  int calculateTotalCalories() {
+    int calories = 0;
+    if (_caloriesController.text.isNotEmpty) {
+      calories += int.parse(_caloriesController.text);
+    }
+
+    calories += _extras.totalCalories;
+
+    if (_drink != null) calories += _drink!.calories;
+
+    return calories;
   }
 
   @override
@@ -209,19 +265,6 @@ class _AddMealPageState extends State<AddMealPage> {
                     ),
                   ],
                 ),
-                // SegmentedButton(
-                //   segments: const [
-                //     ButtonSegment(value: 'Ateria', label: Text('Ateria')),
-                //     ButtonSegment(value: 'Välipala', label: Text('Välipala')),
-                //     ButtonSegment(value: 'Herkku', label: Text('Herkku')),
-                //   ],
-                //   selected: {_type},
-                //   onSelectionChanged: (selection) {
-                //     setState(() {
-                //       _type = selection.first;
-                //     });
-                //   },
-                // ),
                 SizedBox(height: 20),
                 SegmentedButton(
                   segments: const [
@@ -298,6 +341,51 @@ class _AddMealPageState extends State<AddMealPage> {
                       return null;
                     },
                   ),
+                SizedBox(height: 30),
+                SizedBox(
+                  width: double.infinity,
+                  child: Text('Lisukkeet:', textAlign: TextAlign.left),
+                ),
+                if (_extras.isNotEmpty)
+                  ExtrasList(
+                    extras: _extras,
+                    onDelete: (extra) {
+                      setState(() {
+                        _extras.remove(extra);
+                      });
+                    },
+                  ),
+                AddExtraButton(
+                  onPressed: () async {
+                    showExtraDialog('Lisuke');
+                  },
+                ),
+                SizedBox(height: 20),
+                SizedBox(
+                  width: double.infinity,
+                  child: Text('Juoma:', textAlign: TextAlign.left),
+                ),
+                if (_drink != null)
+                  ExtrasList(
+                    extras: [_drink!],
+                    onDelete: (extra) {
+                      setState(() {
+                        _drink = null;
+                      });
+                    },
+                  ),
+                if (_drink == null)
+                  AddExtraButton(
+                    onPressed: () async {
+                      showExtraDialog('Juoma');
+                    },
+                  ),
+                SizedBox(height: 20),
+                Text('Kalorit:'),
+                Text(
+                  calculateTotalCalories().toString(),
+                  style: TextStyle(fontSize: 26),
+                ),
                 SizedBox(height: 30),
                 ElevatedButton(
                   onPressed: () {
