@@ -196,7 +196,7 @@ class _MealsPageState extends State<MealsPage> {
               future: sqfliteUtil.getMeals(_date),
               builder: (context, snapshot) {
                 if (!snapshot.hasData || deleteInProgress) {
-                  return const CircularProgressIndicator();
+                  return Center(child: const CircularProgressIndicator());
                 }
 
                 final meals = snapshot.data!;
@@ -309,9 +309,19 @@ class _MealsPageState extends State<MealsPage> {
                                           Text('Lisukkeet:'),
                                           for (final extra
                                               in expandedMealsExtras)
-                                            Text(
-                                              '${extra.name} ${extra.calories}',
+                                            Row(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment
+                                                      .spaceBetween,
+                                              children: [
+                                                Text(
+                                                  '${extra.name} ${extra.mealSizeShort}',
+                                                ),
+                                                Text('${extra.calories} kcal'),
+                                              ],
                                             ),
+
+                                          SizedBox(height: 5),
                                         ],
                                       ),
 
@@ -320,10 +330,18 @@ class _MealsPageState extends State<MealsPage> {
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
                                         children: [
-                                          SizedBox(height: 10),
                                           Text('Juoma:'),
-                                          Text(
-                                            '${expandedMealsDrink!.name} ${expandedMealsDrink!.calories}',
+                                          Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            children: [
+                                              Text(
+                                                '${expandedMealsDrink!.name} ${expandedMealsDrink!.mealSizeShort}',
+                                              ),
+                                              Text(
+                                                '${expandedMealsDrink!.calories} kcal',
+                                              ),
+                                            ],
                                           ),
                                         ],
                                       ),

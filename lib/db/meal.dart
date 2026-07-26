@@ -64,4 +64,14 @@ class Meal {
       return 'Paino: $weight g';
     }
   }
+
+  String get mealSizeShort {
+    if (size != null) {
+      return '$size';
+    } else if (amount != null) {
+      return '$amount kpl';
+    } else {
+      return '$weight g';
+    }
+  }
 }
