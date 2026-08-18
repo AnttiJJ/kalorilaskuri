@@ -13,7 +13,58 @@ class FoodsStreamBuilder extends StatefulWidget {
 }
 
 class _FoodsStreamBuilderState extends State<FoodsStreamBuilder> {
+  final int pageSize = 5;
+
   String _searchText = '';
+  DocumentSnapshot<Map<String, dynamic>>? lastDoc;
+  List<Food> foods = [];
+  bool hasMoreFoods = false;
+
+  @override
+  void initState() {
+    loadFoods();
+    super.initState();
+  }
+
+  void loadFoodsFresh() {
+    foods = [];
+    loadFoods();
+  }
+
+  Future<void> loadFoods({bool loadMore = false}) async {
+    try {
+      Query<Map<String, dynamic>> query = FirebaseFirestore.instance
+          .collection('foods')
+          .where('type', isEqualTo: widget.type)
+          .orderBy('searchName')
+          .startAt([_searchText.toLowerCase()])
+          .endAt(['${_searchText.toLowerCase()}\uf8ff'])
+          .limit(pageSize + 1);
+
+      if (lastDoc != null && loadMore) {
+        query = query.startAfterDocument(lastDoc!);
+      }
+
+      final snapshot = await query.get();
+
+      final hasMore = snapshot.docs.length > pageSize;
+      final docs = hasMore ? snapshot.docs.sublist(0, pageSize) : snapshot.docs;
+
+      if (snapshot.docs.isNotEmpty) {
+        lastDoc = docs.last;
+      }
+
+      setState(() {
+        foods.addAll(docs.map(Food.fromFirestore).toList());
+        hasMoreFoods = hasMore;
+      });
+
+      return;
+    } catch (e) {
+      print(e);
+      return;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -27,37 +78,27 @@ class _FoodsStreamBuilderState extends State<FoodsStreamBuilder> {
           onChanged: (value) {
             setState(() {
               _searchText = value;
+              loadFoodsFresh();
             });
           },
         ),
         Expanded(
-          child: StreamBuilder<List<Food>>(
-            stream: FirebaseFirestore.instance
-                .collection('foods')
-                .where('type', isEqualTo: widget.type)
-                .orderBy('searchName')
-                .startAt([_searchText.toLowerCase()])
-                .endAt(['${_searchText.toLowerCase()}\uf8ff'])
-                .snapshots()
-                .map(
-                  (snapshot) => snapshot.docs.map(Food.fromFirestore).toList(),
-                ),
-            builder: (context, snapshot) {
-              if (!snapshot.hasData) {
-                return const Center(child: CircularProgressIndicator());
-              }
+          child: Container(
+            margin: const EdgeInsets.only(bottom: 20.0),
+            child: ListView.builder(
+              itemCount: hasMoreFoods ? foods.length + 1 : foods.length,
+              itemBuilder: (context, index) {
+                if (index == foods.length && hasMoreFoods) {
+                  return FilledButton(
+                    onPressed: () => loadFoods(loadMore: true),
+                    child: Text('Lisää'),
+                  );
+                }
+                final food = foods[index];
 
-              final foods = snapshot.data!;
-
-              return ListView.builder(
-                itemCount: foods.length,
-                itemBuilder: (context, index) {
-                  final food = foods[index];
-
-                  return FoodCard(food: food);
-                },
-              );
-            },
+                return FoodCard(food: food);
+              },
+            ),
           ),
         ),
       ],

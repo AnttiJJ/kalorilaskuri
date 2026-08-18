@@ -143,36 +143,39 @@ class _AddMealFromMenuPageState extends State<SelectMealFromMenuPage> {
               },
             ),
             Expanded(
-              child: ListView.builder(
-                itemCount: hasMoreFoods ? foods.length + 1 : foods.length,
-                itemBuilder: (context, index) {
-                  if (index == foods.length && hasMoreFoods) {
-                    return FilledButton(
-                      onPressed: () => loadFoods(loadMore: true),
-                      child: Text('Lisää'),
-                    );
-                  }
+              child: Container(
+                margin: const EdgeInsets.only(bottom: 20.0),
+                child: ListView.builder(
+                  itemCount: hasMoreFoods ? foods.length + 1 : foods.length,
+                  itemBuilder: (context, index) {
+                    if (index == foods.length && hasMoreFoods) {
+                      return FilledButton(
+                        onPressed: () => loadFoods(loadMore: true),
+                        child: Text('Lisää'),
+                      );
+                    }
 
-                  return Card(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        ListTile(
-                          title: Text(foods[index].name.toString()),
-                          onTap: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder: (context) =>
-                                    AddMealFromMenuPage(food: foods[index]),
-                              ),
-                            );
-                          },
-                        ),
-                      ],
-                    ),
-                  );
-                },
+                    return Card(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          ListTile(
+                            title: Text(foods[index].name.toString()),
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) =>
+                                      AddMealFromMenuPage(food: foods[index]),
+                                ),
+                              );
+                            },
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                ),
               ),
             ),
           ],
