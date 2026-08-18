@@ -80,7 +80,7 @@ class _UpdateDrinkPageState extends State<UpdateDrinkPage> {
     }
 
     if (!mounted) return;
-    Navigator.pop(context);
+    Navigator.pop(context, true);
   }
 
   @override

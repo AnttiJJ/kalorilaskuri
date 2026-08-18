@@ -96,7 +96,14 @@ class _FoodsStreamBuilderState extends State<FoodsStreamBuilder> {
                 }
                 final food = foods[index];
 
-                return FoodCard(food: food);
+                return FoodCard(
+                  food: food,
+                  onChanged: () {
+                    setState(() {
+                      loadFoodsFresh();
+                    });
+                  },
+                );
               },
             ),
           ),

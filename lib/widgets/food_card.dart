@@ -7,8 +7,9 @@ import 'package:kalorilaskuri/pages/update_food_page.dart';
 
 class FoodCard extends StatefulWidget {
   final Food food;
+  final VoidCallback onChanged;
 
-  const FoodCard({super.key, required this.food});
+  const FoodCard({super.key, required this.food, required this.onChanged});
 
   @override
   State<FoodCard> createState() => _FoodCardState();
@@ -57,6 +58,7 @@ class _FoodCardState extends State<FoodCard> {
       try {
         final FirestoreUtil firestoreUtil = FirestoreUtil();
         firestoreUtil.deleteFood(name);
+        widget.onChanged();
       } catch (e) {
         print(e);
         return;
@@ -83,7 +85,7 @@ class _FoodCardState extends State<FoodCard> {
                 children: [
                   IconButton(
                     onPressed: () async {
-                      await Navigator.push(
+                      final changed = await Navigator.push(
                         context,
                         MaterialPageRoute(
                           builder: (context) {
@@ -96,7 +98,10 @@ class _FoodCardState extends State<FoodCard> {
                           },
                         ),
                       );
-                      //setState(() {});
+
+                      if (changed) {
+                        widget.onChanged();
+                      }
                     },
                     icon: Icon(Icons.mode, color: Colors.blue),
                   ),

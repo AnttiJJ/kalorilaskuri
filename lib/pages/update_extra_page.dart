@@ -124,7 +124,7 @@ class _UpdateExtraPageState extends State<UpdateExtraPage> {
     }
 
     if (!mounted) return;
-    Navigator.pop(context);
+    Navigator.pop(context, true);
   }
 
   @override
