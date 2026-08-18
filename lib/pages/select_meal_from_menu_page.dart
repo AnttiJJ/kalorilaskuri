@@ -17,6 +17,7 @@ class _AddMealFromMenuPageState extends State<SelectMealFromMenuPage> {
   DocumentSnapshot<Map<String, dynamic>>? lastDoc;
   List<Food> foods = [];
   String _searchText = '';
+  bool hasMoreFoods = false;
 
   @override
   void initState() {
@@ -37,7 +38,7 @@ class _AddMealFromMenuPageState extends State<SelectMealFromMenuPage> {
           .orderBy('searchName')
           .startAt([_searchText.toLowerCase()])
           .endAt(['${_searchText.toLowerCase()}\uf8ff'])
-          .limit(pageSize);
+          .limit(pageSize + 1);
 
       if (lastDoc != null && loadMore) {
         query = query.startAfterDocument(lastDoc!);
@@ -45,12 +46,16 @@ class _AddMealFromMenuPageState extends State<SelectMealFromMenuPage> {
 
       final snapshot = await query.get();
 
+      final hasMore = snapshot.docs.length > pageSize;
+      final docs = hasMore ? snapshot.docs.sublist(0, pageSize) : snapshot.docs;
+
       if (snapshot.docs.isNotEmpty) {
-        lastDoc = snapshot.docs.last;
+        lastDoc = docs.last;
       }
 
       setState(() {
-        foods.addAll(snapshot.docs.map(Food.fromFirestore).toList());
+        foods.addAll(docs.map(Food.fromFirestore).toList());
+        hasMoreFoods = hasMore;
       });
     } catch (e) {
       print(e);
@@ -139,8 +144,15 @@ class _AddMealFromMenuPageState extends State<SelectMealFromMenuPage> {
             ),
             Expanded(
               child: ListView.builder(
-                itemCount: foods.length,
+                itemCount: hasMoreFoods ? foods.length + 1 : foods.length,
                 itemBuilder: (context, index) {
+                  if (index == foods.length && hasMoreFoods) {
+                    return FilledButton(
+                      onPressed: () => loadFoods(loadMore: true),
+                      child: Text('Lisää'),
+                    );
+                  }
+
                   return Card(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
