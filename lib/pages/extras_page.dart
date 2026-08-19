@@ -10,6 +10,8 @@ class ExtrasPage extends StatefulWidget {
 }
 
 class _ExtrasPageState extends State<ExtrasPage> {
+  final extrasKey = GlobalKey<FoodsStreamBuilderState>();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -17,14 +19,18 @@ class _ExtrasPageState extends State<ExtrasPage> {
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text('Lisukkeet'),
       ),
-      body: FoodsStreamBuilder(type: 'Lisuke'),
+      body: FoodsStreamBuilder(key: extrasKey, type: 'Lisuke'),
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
-          await Navigator.push(
+          final added = await Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => const AddExtraPage()),
           );
-          setState(() {});
+          if (added != null) {
+            if (added) {
+              await extrasKey.currentState?.loadFoodsFresh();
+            }
+          }
         },
         tooltip: 'Lisää lisuke',
         child: const Icon(Icons.add),

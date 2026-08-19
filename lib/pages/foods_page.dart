@@ -10,6 +10,10 @@ class FoodsPage extends StatefulWidget {
 }
 
 class _FoodsPageState extends State<FoodsPage> {
+  final mealsKey = GlobalKey<FoodsStreamBuilderState>();
+  final snacksKey = GlobalKey<FoodsStreamBuilderState>();
+  final treatsKey = GlobalKey<FoodsStreamBuilderState>();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -17,37 +21,53 @@ class _FoodsPageState extends State<FoodsPage> {
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text('Ruokalista'),
       ),
-      body: DefaultTabController(
-        initialIndex: 0,
-        length: 3,
-        child: Scaffold(
-          appBar: AppBar(
-            automaticallyImplyLeading: false,
-            title: const TabBar(
-              tabs: <Widget>[
-                Tab(text: 'Ateriat'),
-                Tab(text: 'Välipalat'),
-                Tab(text: 'Herkut'),
+      body: SafeArea(
+        child: DefaultTabController(
+          initialIndex: 0,
+          length: 3,
+          child: Scaffold(
+            appBar: AppBar(
+              automaticallyImplyLeading: false,
+              title: const TabBar(
+                tabs: <Widget>[
+                  Tab(text: 'Ateriat'),
+                  Tab(text: 'Välipalat'),
+                  Tab(text: 'Herkut'),
+                ],
+              ),
+            ),
+            body: TabBarView(
+              children: <Widget>[
+                FoodsStreamBuilder(key: mealsKey, type: 'Ateria'),
+                FoodsStreamBuilder(key: snacksKey, type: 'Välipala'),
+                FoodsStreamBuilder(key: treatsKey, type: 'Herkku'),
               ],
             ),
-          ),
-          body: const TabBarView(
-            children: <Widget>[
-              FoodsStreamBuilder(type: 'Ateria'),
-              FoodsStreamBuilder(type: 'Välipala'),
-              FoodsStreamBuilder(type: 'Herkku'),
-            ],
-          ),
-          floatingActionButton: FloatingActionButton(
-            onPressed: () async {
-              await Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => const AddFoodPage()),
-              );
-              setState(() {});
-            },
-            tooltip: 'Lisää ruoka',
-            child: const Icon(Icons.add),
+            floatingActionButton: FloatingActionButton(
+              onPressed: () async {
+                final type = await Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => const AddFoodPage()),
+                );
+
+                if (type != null) {
+                  switch (type) {
+                    case 'Ateria':
+                      await mealsKey.currentState?.loadFoodsFresh();
+                      break;
+                    case 'Välipala':
+                      await snacksKey.currentState?.loadFoodsFresh();
+                      break;
+                    case 'Herkku':
+                      await treatsKey.currentState?.loadFoodsFresh();
+                      break;
+                    default:
+                  }
+                }
+              },
+              tooltip: 'Lisää ruoka',
+              child: const Icon(Icons.add),
+            ),
           ),
         ),
       ),

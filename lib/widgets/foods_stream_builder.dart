@@ -9,10 +9,10 @@ class FoodsStreamBuilder extends StatefulWidget {
   const FoodsStreamBuilder({super.key, required this.type});
 
   @override
-  State<FoodsStreamBuilder> createState() => _FoodsStreamBuilderState();
+  State<FoodsStreamBuilder> createState() => FoodsStreamBuilderState();
 }
 
-class _FoodsStreamBuilderState extends State<FoodsStreamBuilder> {
+class FoodsStreamBuilderState extends State<FoodsStreamBuilder> {
   final int pageSize = 5;
 
   String _searchText = '';
@@ -26,9 +26,9 @@ class _FoodsStreamBuilderState extends State<FoodsStreamBuilder> {
     super.initState();
   }
 
-  void loadFoodsFresh() {
-    foods = [];
-    loadFoods();
+  Future<void> loadFoodsFresh() async {
+    foods.clear();
+    await loadFoods();
   }
 
   Future<void> loadFoods({bool loadMore = false}) async {
@@ -84,7 +84,7 @@ class _FoodsStreamBuilderState extends State<FoodsStreamBuilder> {
         ),
         Expanded(
           child: Container(
-            margin: const EdgeInsets.only(bottom: 20.0),
+            margin: const EdgeInsets.only(bottom: 10.0),
             child: ListView.builder(
               itemCount: hasMoreFoods ? foods.length + 1 : foods.length,
               itemBuilder: (context, index) {
@@ -97,6 +97,7 @@ class _FoodsStreamBuilderState extends State<FoodsStreamBuilder> {
                 final food = foods[index];
 
                 return FoodCard(
+                  key: ValueKey(food.name),
                   food: food,
                   onChanged: () {
                     setState(() {

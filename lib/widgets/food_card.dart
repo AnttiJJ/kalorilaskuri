@@ -12,10 +12,10 @@ class FoodCard extends StatefulWidget {
   const FoodCard({super.key, required this.food, required this.onChanged});
 
   @override
-  State<FoodCard> createState() => _FoodCardState();
+  State<FoodCard> createState() => FoodCardState();
 }
 
-class _FoodCardState extends State<FoodCard> {
+class FoodCardState extends State<FoodCard> {
   bool expanded = false;
   int? weightCal;
   int? pieceCal;
@@ -99,8 +99,10 @@ class _FoodCardState extends State<FoodCard> {
                         ),
                       );
 
-                      if (changed) {
-                        widget.onChanged();
+                      if (changed != null) {
+                        if (changed) {
+                          widget.onChanged();
+                        }
                       }
                     },
                     icon: Icon(Icons.mode, color: Colors.blue),

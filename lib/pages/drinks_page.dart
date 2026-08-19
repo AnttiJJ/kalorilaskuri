@@ -10,6 +10,8 @@ class DrinksPage extends StatefulWidget {
 }
 
 class _DrinksPageState extends State<DrinksPage> {
+  final drinksKey = GlobalKey<FoodsStreamBuilderState>();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -17,14 +19,19 @@ class _DrinksPageState extends State<DrinksPage> {
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text('Juomat'),
       ),
-      body: FoodsStreamBuilder(type: 'Juoma'),
+      body: FoodsStreamBuilder(key: drinksKey, type: 'Juoma'),
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
-          await Navigator.push(
+          final added = await Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => const AddDrinkPage()),
           );
-          setState(() {});
+
+          if (added != null) {
+            if (added) {
+              await drinksKey.currentState?.loadFoodsFresh();
+            }
+          }
         },
         tooltip: 'Lisää juoma',
         child: const Icon(Icons.add),

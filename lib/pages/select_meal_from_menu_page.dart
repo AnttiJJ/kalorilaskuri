@@ -70,115 +70,118 @@ class _AddMealFromMenuPageState extends State<SelectMealFromMenuPage> {
         title: Text('Uusi ateria listalta'),
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
       ),
-      body: Padding(
-        padding: const EdgeInsetsGeometry.all(20),
-        child: Column(
-          children: [
-            Wrap(
-              spacing: 8,
-              runSpacing: 8,
-              children: [
-                ChoiceChip(
-                  label: const Text('Ateria'),
-                  selected: _type == 'Ateria',
-                  onSelected: (value) {
-                    setState(() {
-                      _type = 'Ateria';
-                      loadFoodsFresh();
-                    });
-                  },
-                ),
-                ChoiceChip(
-                  label: const Text('Välipala'),
-                  selected: _type == 'Välipala',
-                  onSelected: (value) {
-                    setState(() {
-                      _type = 'Välipala';
-                      loadFoodsFresh();
-                    });
-                  },
-                ),
-                ChoiceChip(
-                  label: const Text('Herkku'),
-                  selected: _type == 'Herkku',
-                  onSelected: (value) {
-                    setState(() {
-                      _type = 'Herkku';
-                      loadFoodsFresh();
-                    });
-                  },
-                ),
-                ChoiceChip(
-                  label: const Text('Lisuke'),
-                  selected: _type == 'Lisuke',
-                  onSelected: (value) {
-                    setState(() {
-                      _type = 'Lisuke';
-                      loadFoodsFresh();
-                    });
-                  },
-                ),
-                ChoiceChip(
-                  label: const Text('Juoma'),
-                  selected: _type == 'Juoma',
-                  onSelected: (value) {
-                    setState(() {
-                      _type = 'Juoma';
-                      loadFoodsFresh();
-                    });
-                  },
-                ),
-              ],
-            ),
-            TextField(
-              decoration: const InputDecoration(
-                hintText: 'Hae...',
-                prefixIcon: Icon(Icons.search),
+      body: Container(
+        margin: const EdgeInsets.only(bottom: 10.0),
+        child: Padding(
+          padding: const EdgeInsetsGeometry.all(20),
+          child: Column(
+            children: [
+              Wrap(
+                spacing: 8,
+                runSpacing: 8,
+                children: [
+                  ChoiceChip(
+                    label: const Text('Ateria'),
+                    selected: _type == 'Ateria',
+                    onSelected: (value) {
+                      setState(() {
+                        _type = 'Ateria';
+                        loadFoodsFresh();
+                      });
+                    },
+                  ),
+                  ChoiceChip(
+                    label: const Text('Välipala'),
+                    selected: _type == 'Välipala',
+                    onSelected: (value) {
+                      setState(() {
+                        _type = 'Välipala';
+                        loadFoodsFresh();
+                      });
+                    },
+                  ),
+                  ChoiceChip(
+                    label: const Text('Herkku'),
+                    selected: _type == 'Herkku',
+                    onSelected: (value) {
+                      setState(() {
+                        _type = 'Herkku';
+                        loadFoodsFresh();
+                      });
+                    },
+                  ),
+                  ChoiceChip(
+                    label: const Text('Lisuke'),
+                    selected: _type == 'Lisuke',
+                    onSelected: (value) {
+                      setState(() {
+                        _type = 'Lisuke';
+                        loadFoodsFresh();
+                      });
+                    },
+                  ),
+                  ChoiceChip(
+                    label: const Text('Juoma'),
+                    selected: _type == 'Juoma',
+                    onSelected: (value) {
+                      setState(() {
+                        _type = 'Juoma';
+                        loadFoodsFresh();
+                      });
+                    },
+                  ),
+                ],
               ),
-              onChanged: (value) {
-                setState(() {
-                  _searchText = value;
-                  loadFoodsFresh();
-                });
-              },
-            ),
-            Expanded(
-              child: Container(
-                margin: const EdgeInsets.only(bottom: 20.0),
-                child: ListView.builder(
-                  itemCount: hasMoreFoods ? foods.length + 1 : foods.length,
-                  itemBuilder: (context, index) {
-                    if (index == foods.length && hasMoreFoods) {
-                      return FilledButton(
-                        onPressed: () => loadFoods(loadMore: true),
-                        child: Text('Lisää'),
-                      );
-                    }
+              TextField(
+                decoration: const InputDecoration(
+                  hintText: 'Hae...',
+                  prefixIcon: Icon(Icons.search),
+                ),
+                onChanged: (value) {
+                  setState(() {
+                    _searchText = value;
+                    loadFoodsFresh();
+                  });
+                },
+              ),
+              Expanded(
+                child: Container(
+                  margin: const EdgeInsets.only(bottom: 20.0),
+                  child: ListView.builder(
+                    itemCount: hasMoreFoods ? foods.length + 1 : foods.length,
+                    itemBuilder: (context, index) {
+                      if (index == foods.length && hasMoreFoods) {
+                        return FilledButton(
+                          onPressed: () => loadFoods(loadMore: true),
+                          child: Text('Lisää'),
+                        );
+                      }
 
-                    return Card(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          ListTile(
-                            title: Text(foods[index].name.toString()),
-                            onTap: () {
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                  builder: (context) =>
-                                      AddMealFromMenuPage(food: foods[index]),
-                                ),
-                              );
-                            },
-                          ),
-                        ],
-                      ),
-                    );
-                  },
+                      return Card(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            ListTile(
+                              title: Text(foods[index].name.toString()),
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        AddMealFromMenuPage(food: foods[index]),
+                                  ),
+                                );
+                              },
+                            ),
+                          ],
+                        ),
+                      );
+                    },
+                  ),
                 ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

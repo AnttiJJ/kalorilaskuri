@@ -82,14 +82,14 @@ class _AddExtraPageState extends State<AddExtraPage> {
 
     try {
       FirestoreUtil firestoreUtil = FirestoreUtil();
-      firestoreUtil.addFood(food);
+      await firestoreUtil.addFood(food);
     } catch (e) {
       print(e);
       return;
     }
 
     if (!mounted) return;
-    Navigator.pop(context);
+    Navigator.pop(context, true);
   }
 
   @override

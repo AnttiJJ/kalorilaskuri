@@ -83,14 +83,14 @@ class _AddFoodPageState extends State<AddFoodPage> {
 
     try {
       FirestoreUtil firestoreUtil = FirestoreUtil();
-      firestoreUtil.addFood(food);
+      await firestoreUtil.addFood(food);
     } catch (e) {
       print(e);
       return;
     }
 
     if (!mounted) return;
-    Navigator.pop(context);
+    Navigator.pop(context, _type);
   }
 
   @override
