@@ -84,3 +84,12 @@ extension MealListExtension on List<Meal> {
     return fold<int>(0, (sum, meal) => sum + (meal.calories));
   }
 }
+
+extension ThemeColors on BuildContext {
+  Color get primary => Theme.of(this).colorScheme.primary;
+  Color get surface => Theme.of(this).colorScheme.surface;
+  Color get secondary => Theme.of(this).colorScheme.secondary;
+  Color get primaryContainer => Theme.of(this).colorScheme.primaryContainer;
+  Color get surfaceTrans =>
+      Theme.of(this).colorScheme.surface.withValues(alpha: 0.9);
+}

@@ -167,103 +167,101 @@ class _AddMealFromMenuPageState extends State<AddMealFromMenuPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Uusi ateria listalta'),
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        backgroundColor: context.surface,
       ),
+      backgroundColor: context.surfaceTrans,
       body: SingleChildScrollView(
         child: Padding(
-          padding: EdgeInsetsGeometry.all(20),
-          child: Column(
-            children: [
-              Center(
-                child: Text(widget.food.name, style: TextStyle(fontSize: 28)),
-              ),
-              SizedBox(height: 30),
-              Form(
-                key: _formKey,
-                child: Column(
+          padding: EdgeInsetsGeometry.all(15),
+
+          child: Form(
+            key: _formKey,
+            child: Column(
+              children: [
+                Center(
+                  child: Text(widget.food.name, style: TextStyle(fontSize: 28)),
+                ),
+                SizedBox(height: 30),
+                Column(
                   children: [
-                    Column(
-                      children: [
-                        OutlinedButton(
-                          onPressed: selectDate,
-                          child: Text(
-                            '${_datetime!.day.toString().padLeft(2, '0')}.'
-                            '${_datetime!.month.toString().padLeft(2, '0')}.'
-                            '${_datetime!.year}',
-                          ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 20),
-                    FormCaloriesSection(
-                      food: widget.food,
-                      mealSizeType: _mealSizeType,
-                      weightController: _weightController,
-                      amountController: _amountController,
-                      onChanged: (value) {
-                        setState(() {
-                          _mealSizeType = value;
-                        });
-                      },
-                    ),
-                    SizedBox(height: 20),
-                    SizedBox(
-                      width: double.infinity,
-                      child: Text('Lisukkeet:', textAlign: TextAlign.left),
-                    ),
-                    if (extras.isNotEmpty)
-                      ExtrasList(
-                        extras: extras,
-                        onDelete: (extra) {
-                          setState(() {
-                            extras.remove(extra);
-                          });
-                        },
+                    OutlinedButton(
+                      onPressed: selectDate,
+                      child: Text(
+                        '${_datetime!.day.toString().padLeft(2, '0')}.'
+                        '${_datetime!.month.toString().padLeft(2, '0')}.'
+                        '${_datetime!.year}',
                       ),
-                    AddExtraButton(
-                      onPressed: () async {
-                        showExtraDialog('Lisuke');
-                      },
-                    ),
-                    SizedBox(height: 20),
-                    SizedBox(
-                      width: double.infinity,
-                      child: Text('Juoma:', textAlign: TextAlign.left),
-                    ),
-                    if (drink != null)
-                      ExtrasList(
-                        extras: [drink!],
-                        onDelete: (extra) {
-                          setState(() {
-                            drink = null;
-                          });
-                        },
-                      ),
-                    if (drink == null)
-                      AddExtraButton(
-                        onPressed: () async {
-                          showExtraDialog('Juoma');
-                        },
-                      ),
-                    SizedBox(height: 20),
-                    Text('Kalorit:'),
-                    Text(
-                      calculateTotalCalories().toString(),
-                      style: TextStyle(fontSize: 26),
-                    ),
-                    SizedBox(height: 30),
-                    ElevatedButton(
-                      onPressed: () {
-                        if (_formKey.currentState!.validate()) {
-                          saveMeal();
-                        }
-                      },
-                      child: const Text('Tallenna'),
                     ),
                   ],
                 ),
-              ),
-            ],
+                SizedBox(height: 20),
+                FormCaloriesSection(
+                  food: widget.food,
+                  mealSizeType: _mealSizeType,
+                  weightController: _weightController,
+                  amountController: _amountController,
+                  onChanged: (value) {
+                    setState(() {
+                      _mealSizeType = value;
+                    });
+                  },
+                ),
+                SizedBox(height: 20),
+                SizedBox(
+                  width: double.infinity,
+                  child: Text('Lisukkeet:', textAlign: TextAlign.left),
+                ),
+                if (extras.isNotEmpty)
+                  ExtrasList(
+                    extras: extras,
+                    onDelete: (extra) {
+                      setState(() {
+                        extras.remove(extra);
+                      });
+                    },
+                  ),
+                AddExtraButton(
+                  onPressed: () async {
+                    showExtraDialog('Lisuke');
+                  },
+                ),
+                SizedBox(height: 20),
+                SizedBox(
+                  width: double.infinity,
+                  child: Text('Juoma:', textAlign: TextAlign.left),
+                ),
+                if (drink != null)
+                  ExtrasList(
+                    extras: [drink!],
+                    onDelete: (extra) {
+                      setState(() {
+                        drink = null;
+                      });
+                    },
+                  ),
+                if (drink == null)
+                  AddExtraButton(
+                    onPressed: () async {
+                      showExtraDialog('Juoma');
+                    },
+                  ),
+                SizedBox(height: 20),
+                Text('Kalorit:'),
+                Text(
+                  calculateTotalCalories().toString(),
+                  style: TextStyle(fontSize: 26),
+                ),
+                SizedBox(height: 30),
+                ElevatedButton(
+                  onPressed: () {
+                    if (_formKey.currentState!.validate()) {
+                      saveMeal();
+                    }
+                  },
+                  child: const Text('Tallenna'),
+                ),
+              ],
+            ),
           ),
         ),
       ),

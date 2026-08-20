@@ -4,6 +4,7 @@ import 'package:kalorilaskuri/notifiers.dart';
 import 'package:kalorilaskuri/pages/drinks_page.dart';
 import 'package:kalorilaskuri/pages/extras_page.dart';
 import 'package:kalorilaskuri/pages/foods_page.dart';
+import 'package:kalorilaskuri/utils/extensions.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class MenuPage extends StatelessWidget {
@@ -29,6 +30,7 @@ class MenuPage extends StatelessWidget {
           contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
           leading: Icon(Icons.menu_book),
           title: Text('Ruokalista'),
+          tileColor: context.primaryContainer.withValues(alpha: 0.9),
           onTap: () {
             Navigator.push(
               context,
@@ -40,6 +42,7 @@ class MenuPage extends StatelessWidget {
           contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
           leading: Icon(Icons.breakfast_dining),
           title: Text('Lisukkeet'),
+          tileColor: context.primaryContainer.withValues(alpha: 0.9),
           onTap: () {
             Navigator.push(
               context,
@@ -51,6 +54,7 @@ class MenuPage extends StatelessWidget {
           contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
           leading: Icon(Icons.coffee),
           title: Text('Juomat'),
+          tileColor: context.primaryContainer.withValues(alpha: 0.9),
           onTap: () {
             Navigator.push(
               context,
@@ -62,12 +66,14 @@ class MenuPage extends StatelessWidget {
           contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
           leading: Icon(Icons.person),
           title: Text('Vaihda käyttäjää'),
+          tileColor: context.primaryContainer.withValues(alpha: 0.9),
           onTap: () => clearUser(),
         ),
         ListTile(
           contentPadding: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
           leading: Icon(Icons.logout),
           title: Text('Kirjaudu ulos'),
+          tileColor: context.primaryContainer.withValues(alpha: 0.9),
           onTap: () => logOut(),
         ),
       ],

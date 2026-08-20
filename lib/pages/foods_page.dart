@@ -17,10 +17,7 @@ class _FoodsPageState extends State<FoodsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text('Ruokalista'),
-      ),
+      appBar: AppBar(title: Text('Ruokalista')),
       body: SafeArea(
         child: DefaultTabController(
           initialIndex: 0,

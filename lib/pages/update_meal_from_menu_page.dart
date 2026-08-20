@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:kalorilaskuri/db/firestore_util.dart';
 import 'package:kalorilaskuri/db/food.dart';
 import 'package:kalorilaskuri/db/meal.dart';
@@ -215,26 +214,27 @@ class _UpdateMealFromMenuPageState extends State<UpdateMealFromMenuPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Muokkaa ateriaa'),
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-      ),
+      appBar: AppBar(title: const Text('Muokkaa ateriaa')),
+      backgroundColor: context.surfaceTrans,
       body: SingleChildScrollView(
         child: Padding(
-          padding: EdgeInsetsGeometry.all(20),
+          padding: EdgeInsetsGeometry.all(15),
           child: Column(
             children: [
               if (loading)
                 const CircularProgressIndicator()
               else ...[
-                Center(
-                  child: Text(_food!.name, style: TextStyle(fontSize: 28)),
-                ),
-                SizedBox(height: 30),
                 Form(
                   key: _formKey,
                   child: Column(
                     children: [
+                      Center(
+                        child: Text(
+                          _food!.name,
+                          style: TextStyle(fontSize: 28),
+                        ),
+                      ),
+                      SizedBox(height: 30),
                       FormCaloriesSection(
                         food: _food!,
                         mealSizeType: _mealSizeType,

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:kalorilaskuri/db/firestore_util.dart';
 import 'package:kalorilaskuri/db/food.dart';
+import 'package:kalorilaskuri/utils/extensions.dart';
 
 class AddDrinkPage extends StatefulWidget {
   const AddDrinkPage({super.key});
@@ -67,13 +68,11 @@ class _AddDrinkPageState extends State<AddDrinkPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Uusi juoma'),
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-      ),
+      appBar: AppBar(title: Text('Uusi juoma')),
+      backgroundColor: context.surfaceTrans,
       body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.all(30.0),
+          padding: const EdgeInsets.all(15.0),
           child: Form(
             key: _formKey,
             child: Column(

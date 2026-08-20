@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:kalorilaskuri/db/firestore_util.dart';
+import 'package:kalorilaskuri/utils/extensions.dart';
 import 'package:kalorilaskuri/widgets/add_calories_dialog.dart';
 import 'package:kalorilaskuri/widgets/calories_daily_widget.dart';
 

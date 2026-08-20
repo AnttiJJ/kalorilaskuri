@@ -44,30 +44,6 @@ class _AddExtraDialogState extends State<AddExtraDialog> {
     );
     String? size = _mealSizeType!.getMealSize;
 
-    // switch (_mealSizeType) {
-    //   case 'Paino':
-    //     weight = int.parse(_weightController.text);
-    //     calories = weight * _selectedFood!.caloriesPer100g! ~/ 100;
-    //     break;
-    //   case 'Määrä':
-    //     amount = int.parse(_amountController.text);
-    //     calories = amount * _selectedFood!.caloriesPerPiece!;
-    //     break;
-    //   case 'Pieni':
-    //     size = 'Pieni';
-    //     calories = _selectedFood!.caloriesPerSize!['Pieni']!;
-    //     break;
-    //   case 'Normaali':
-    //     size = 'Normaali';
-    //     calories = _selectedFood!.caloriesPerSize!['Normaali']!;
-    //     break;
-    //   case 'Iso':
-    //     size = 'Iso';
-    //     calories = _selectedFood!.caloriesPerSize!['Iso']!;
-    //     break;
-    //   default:
-    // }
-
     final Meal meal = Meal(
       name: name,
       calories: calories,

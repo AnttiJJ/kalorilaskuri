@@ -197,13 +197,11 @@ class _UpdateMealPageState extends State<UpdateMealPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Muokkaa ateriaa'),
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-      ),
+      appBar: AppBar(title: Text('Muokkaa ateriaa')),
+      backgroundColor: context.surfaceTrans,
       body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.all(30.0),
+          padding: const EdgeInsets.all(15.0),
           child: Form(
             key: _formKey,
             child: Column(

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:kalorilaskuri/db/firestore_util.dart';
 import 'package:kalorilaskuri/db/food.dart';
+import 'package:kalorilaskuri/utils/extensions.dart';
 
 class UpdateExtraPage extends StatefulWidget {
   final Food food;
@@ -130,13 +131,11 @@ class _UpdateExtraPageState extends State<UpdateExtraPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Muokkaa lisuketta'),
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-      ),
+      appBar: AppBar(title: Text('Muokkaa lisuketta')),
+      backgroundColor: context.surfaceTrans,
       body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.all(30.0),
+          padding: const EdgeInsets.all(15.0),
           child: Form(
             key: _formKey,
             child: Column(

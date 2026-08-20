@@ -8,10 +8,12 @@ import 'package:kalorilaskuri/pages/login_page.dart';
 import 'package:kalorilaskuri/pages/meals_page.dart';
 import 'package:kalorilaskuri/pages/menu_page.dart';
 import 'package:kalorilaskuri/pages/user_select_page.dart';
+import 'package:kalorilaskuri/utils/theme.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
   final SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -29,7 +31,22 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'KAlorilaskuri',
-      theme: ThemeData(colorScheme: .fromSeed(seedColor: Colors.deepPurple)),
+      theme: appTheme,
+      builder: (context, child) {
+        return SafeArea(
+          child: Stack(
+            children: [
+              Positioned.fill(
+                child: Image.asset(
+                  'assets/images/Background.png',
+                  fit: BoxFit.cover,
+                ),
+              ),
+              Positioned.fill(child: child!),
+            ],
+          ),
+        );
+      },
       home: StreamBuilder<User?>(
         stream: FirebaseAuth.instance.authStateChanges(),
         builder: (context, snapshot) {
@@ -79,8 +96,9 @@ class _MyHomePageState extends State<MyHomePage> {
       builder: (context, userSelected, child) {
         if (userSelected != '') {
           return Scaffold(
+            backgroundColor: Colors.transparent,
             appBar: AppBar(
-              backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+              backgroundColor: Theme.of(context).colorScheme.surface,
               title: Text('KAlorilaskuri ($userSelected)'),
             ),
             bottomNavigationBar: BottomNavigationBar(

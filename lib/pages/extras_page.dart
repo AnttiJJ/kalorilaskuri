@@ -15,10 +15,7 @@ class _ExtrasPageState extends State<ExtrasPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: Text('Lisukkeet'),
-      ),
+      appBar: AppBar(title: Text('Lisukkeet')),
       body: FoodsStreamBuilder(key: extrasKey, type: 'Lisuke'),
       floatingActionButton: FloatingActionButton(
         onPressed: () async {

@@ -161,241 +161,246 @@ class _AddMealPageState extends State<AddMealPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text('Uusi ateria'),
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        backgroundColor: context.surface,
       ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.all(20.0),
-          child: Form(
-            key: _formKey,
-            child: Column(
-              children: [
-                TextFormField(
-                  controller: _nameController,
-                  decoration: const InputDecoration(labelText: 'Aterian nimi'),
-                  validator: (String? value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Anna aterian nimi';
-                    }
-                    return null;
-                  },
-                ),
-                SizedBox(height: 20),
-                Column(
-                  children: [
-                    OutlinedButton(
-                      onPressed: selectDate,
-                      child: Text(
-                        '${_datetime!.day.toString().padLeft(2, '0')}.'
-                        '${_datetime!.month.toString().padLeft(2, '0')}.'
-                        '${_datetime!.year}',
-                      ),
-                    ),
-                  ],
-                ),
-                SizedBox(height: 20),
-                TextFormField(
-                  controller: _caloriesController,
-                  keyboardType: TextInputType.number,
-                  inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                  decoration: const InputDecoration(labelText: 'Kalorit'),
-                  validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Anna kalorit';
-                    }
-
-                    final number = int.tryParse(value);
-
-                    if (number == null || number <= 0) {
-                      return 'Anna kalorit positiivisena lukuna';
-                    }
-
-                    return null;
-                  },
-                ),
-                SizedBox(height: 20),
-                Wrap(
-                  spacing: 8,
-                  runSpacing: 8,
-                  children: [
-                    ChoiceChip(
-                      label: const Text('Ateria'),
-                      selected: _type == 'Ateria',
-                      onSelected: (value) {
-                        setState(() {
-                          _type = 'Ateria';
-                        });
-                      },
-                    ),
-                    ChoiceChip(
-                      label: const Text('Välipala'),
-                      selected: _type == 'Välipala',
-                      onSelected: (value) {
-                        setState(() {
-                          _type = 'Välipala';
-                        });
-                      },
-                    ),
-                    ChoiceChip(
-                      label: const Text('Herkku'),
-                      selected: _type == 'Herkku',
-                      onSelected: (value) {
-                        setState(() {
-                          _type = 'Herkku';
-                        });
-                      },
-                    ),
-                    ChoiceChip(
-                      label: const Text('Lisuke'),
-                      selected: _type == 'Lisuke',
-                      onSelected: (value) {
-                        setState(() {
-                          _type = 'Lisuke';
-                        });
-                      },
-                    ),
-                    ChoiceChip(
-                      label: const Text('Juoma'),
-                      selected: _type == 'Juoma',
-                      onSelected: (value) {
-                        setState(() {
-                          _type = 'Juoma';
-                        });
-                      },
-                    ),
-                  ],
-                ),
-                SizedBox(height: 20),
-                SegmentedButton(
-                  segments: const [
-                    ButtonSegment(value: 'Paino', label: Text('Paino')),
-                    ButtonSegment(value: 'Koko', label: Text('Koko')),
-                    ButtonSegment(value: 'Määrä', label: Text('Määrä')),
-                  ],
-                  selected: {_mealSizeType},
-                  onSelectionChanged: (selection) {
-                    setState(() {
-                      _mealSizeType = selection.first;
-                    });
-                  },
-                ),
-                if (_mealSizeType == 'Paino')
+      backgroundColor: context.surfaceTrans,
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(15.0),
+            child: Form(
+              key: _formKey,
+              child: Column(
+                children: [
                   TextFormField(
-                    controller: _weightController,
-                    keyboardType: TextInputType.number,
-                    inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                    controller: _nameController,
                     decoration: const InputDecoration(
-                      labelText: 'Paino grammoina',
+                      labelText: 'Aterian nimi',
                     ),
-                    validator: (value) {
+                    validator: (String? value) {
                       if (value == null || value.isEmpty) {
-                        return 'Anna paino';
+                        return 'Anna aterian nimi';
                       }
-
-                      final number = int.tryParse(value);
-
-                      if (number == null || number <= 0) {
-                        return 'Anna paino positiivisena lukuna';
-                      }
-
                       return null;
                     },
                   ),
-                if (_mealSizeType == 'Koko')
-                  DropdownButtonFormField(
-                    decoration: const InputDecoration(
-                      labelText: 'Aterian koko',
-                    ),
-                    initialValue: 'Pieni',
-                    items: const [
-                      DropdownMenuItem(value: 'Pieni', child: Text('Pieni')),
-                      DropdownMenuItem(
-                        value: 'Normaali',
-                        child: Text('Normaali'),
+                  SizedBox(height: 20),
+                  Column(
+                    children: [
+                      OutlinedButton(
+                        onPressed: selectDate,
+                        child: Text(
+                          '${_datetime!.day.toString().padLeft(2, '0')}.'
+                          '${_datetime!.month.toString().padLeft(2, '0')}.'
+                          '${_datetime!.year}',
+                        ),
                       ),
-                      DropdownMenuItem(value: 'Iso', child: Text('Iso')),
                     ],
-                    onChanged: (value) {
-                      setState(() {
-                        _mealSize = value;
-                      });
-                    },
                   ),
-                if (_mealSizeType == 'Määrä')
+                  SizedBox(height: 20),
                   TextFormField(
-                    controller: _amountController,
+                    controller: _caloriesController,
                     keyboardType: TextInputType.number,
                     inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-                    decoration: const InputDecoration(labelText: 'Kpl'),
+                    decoration: const InputDecoration(labelText: 'Kalorit'),
                     validator: (value) {
                       if (value == null || value.isEmpty) {
-                        return 'Anna määrä';
+                        return 'Anna kalorit';
                       }
 
                       final number = int.tryParse(value);
 
                       if (number == null || number <= 0) {
-                        return 'Anna määrä positiivisena lukuna';
+                        return 'Anna kalorit positiivisena lukuna';
                       }
 
                       return null;
                     },
                   ),
-                SizedBox(height: 30),
-                SizedBox(
-                  width: double.infinity,
-                  child: Text('Lisukkeet:', textAlign: TextAlign.left),
-                ),
-                if (_extras.isNotEmpty)
-                  ExtrasList(
-                    extras: _extras,
-                    onDelete: (extra) {
+                  SizedBox(height: 20),
+                  Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
+                    children: [
+                      ChoiceChip(
+                        label: const Text('Ateria'),
+                        selected: _type == 'Ateria',
+                        onSelected: (value) {
+                          setState(() {
+                            _type = 'Ateria';
+                          });
+                        },
+                      ),
+                      ChoiceChip(
+                        label: const Text('Välipala'),
+                        selected: _type == 'Välipala',
+                        onSelected: (value) {
+                          setState(() {
+                            _type = 'Välipala';
+                          });
+                        },
+                      ),
+                      ChoiceChip(
+                        label: const Text('Herkku'),
+                        selected: _type == 'Herkku',
+                        onSelected: (value) {
+                          setState(() {
+                            _type = 'Herkku';
+                          });
+                        },
+                      ),
+                      ChoiceChip(
+                        label: const Text('Lisuke'),
+                        selected: _type == 'Lisuke',
+                        onSelected: (value) {
+                          setState(() {
+                            _type = 'Lisuke';
+                          });
+                        },
+                      ),
+                      ChoiceChip(
+                        label: const Text('Juoma'),
+                        selected: _type == 'Juoma',
+                        onSelected: (value) {
+                          setState(() {
+                            _type = 'Juoma';
+                          });
+                        },
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 20),
+                  SegmentedButton(
+                    segments: const [
+                      ButtonSegment(value: 'Paino', label: Text('Paino')),
+                      ButtonSegment(value: 'Koko', label: Text('Koko')),
+                      ButtonSegment(value: 'Määrä', label: Text('Määrä')),
+                    ],
+                    selected: {_mealSizeType},
+                    onSelectionChanged: (selection) {
                       setState(() {
-                        _extras.remove(extra);
+                        _mealSizeType = selection.first;
                       });
                     },
                   ),
-                AddExtraButton(
-                  onPressed: () async {
-                    showExtraDialog('Lisuke');
-                  },
-                ),
-                SizedBox(height: 20),
-                SizedBox(
-                  width: double.infinity,
-                  child: Text('Juoma:', textAlign: TextAlign.left),
-                ),
-                if (_drink != null)
-                  ExtrasList(
-                    extras: [_drink!],
-                    onDelete: (extra) {
-                      setState(() {
-                        _drink = null;
-                      });
-                    },
+                  if (_mealSizeType == 'Paino')
+                    TextFormField(
+                      controller: _weightController,
+                      keyboardType: TextInputType.number,
+                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                      decoration: const InputDecoration(
+                        labelText: 'Paino grammoina',
+                      ),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Anna paino';
+                        }
+
+                        final number = int.tryParse(value);
+
+                        if (number == null || number <= 0) {
+                          return 'Anna paino positiivisena lukuna';
+                        }
+
+                        return null;
+                      },
+                    ),
+                  if (_mealSizeType == 'Koko')
+                    DropdownButtonFormField(
+                      decoration: const InputDecoration(
+                        labelText: 'Aterian koko',
+                      ),
+                      initialValue: 'Pieni',
+                      items: const [
+                        DropdownMenuItem(value: 'Pieni', child: Text('Pieni')),
+                        DropdownMenuItem(
+                          value: 'Normaali',
+                          child: Text('Normaali'),
+                        ),
+                        DropdownMenuItem(value: 'Iso', child: Text('Iso')),
+                      ],
+                      onChanged: (value) {
+                        setState(() {
+                          _mealSize = value;
+                        });
+                      },
+                    ),
+                  if (_mealSizeType == 'Määrä')
+                    TextFormField(
+                      controller: _amountController,
+                      keyboardType: TextInputType.number,
+                      inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+                      decoration: const InputDecoration(labelText: 'Kpl'),
+                      validator: (value) {
+                        if (value == null || value.isEmpty) {
+                          return 'Anna määrä';
+                        }
+
+                        final number = int.tryParse(value);
+
+                        if (number == null || number <= 0) {
+                          return 'Anna määrä positiivisena lukuna';
+                        }
+
+                        return null;
+                      },
+                    ),
+                  SizedBox(height: 30),
+                  SizedBox(
+                    width: double.infinity,
+                    child: Text('Lisukkeet:', textAlign: TextAlign.left),
                   ),
-                if (_drink == null)
+                  if (_extras.isNotEmpty)
+                    ExtrasList(
+                      extras: _extras,
+                      onDelete: (extra) {
+                        setState(() {
+                          _extras.remove(extra);
+                        });
+                      },
+                    ),
                   AddExtraButton(
                     onPressed: () async {
-                      showExtraDialog('Juoma');
+                      showExtraDialog('Lisuke');
                     },
                   ),
-                SizedBox(height: 20),
-                Text('Kalorit:'),
-                Text(
-                  calculateTotalCalories().toString(),
-                  style: TextStyle(fontSize: 26),
-                ),
-                SizedBox(height: 30),
-                ElevatedButton(
-                  onPressed: () {
-                    if (_formKey.currentState!.validate()) {
-                      saveMeal();
-                    }
-                  },
-                  child: const Text('Tallenna'),
-                ),
-              ],
+                  SizedBox(height: 20),
+                  SizedBox(
+                    width: double.infinity,
+                    child: Text('Juoma:', textAlign: TextAlign.left),
+                  ),
+                  if (_drink != null)
+                    ExtrasList(
+                      extras: [_drink!],
+                      onDelete: (extra) {
+                        setState(() {
+                          _drink = null;
+                        });
+                      },
+                    ),
+                  if (_drink == null)
+                    AddExtraButton(
+                      onPressed: () async {
+                        showExtraDialog('Juoma');
+                      },
+                    ),
+                  SizedBox(height: 20),
+                  Text('Kalorit:'),
+                  Text(
+                    calculateTotalCalories().toString(),
+                    style: TextStyle(fontSize: 26),
+                  ),
+                  SizedBox(height: 30),
+                  ElevatedButton(
+                    onPressed: () {
+                      if (_formKey.currentState!.validate()) {
+                        saveMeal();
+                      }
+                    },
+                    child: const Text('Tallenna'),
+                  ),
+                ],
+              ),
             ),
           ),
         ),

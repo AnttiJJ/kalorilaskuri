@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:kalorilaskuri/db/food.dart';
+import 'package:kalorilaskuri/utils/extensions.dart';
 import 'package:kalorilaskuri/widgets/food_card.dart';
 
 class FoodsStreamBuilder extends StatefulWidget {
@@ -71,9 +72,11 @@ class FoodsStreamBuilderState extends State<FoodsStreamBuilder> {
     return Column(
       children: [
         TextField(
-          decoration: const InputDecoration(
+          decoration: InputDecoration(
             hintText: 'Hae...',
             prefixIcon: Icon(Icons.search),
+            filled: true,
+            fillColor: context.surface,
           ),
           onChanged: (value) {
             setState(() {
