@@ -136,36 +136,38 @@ class _AddExtraDialogState extends State<AddExtraDialog> {
           : SizedBox(
               height: 400,
               width: 400,
-              child: Column(
-                children: [
-                  Form(
-                    key: _formKey,
-                    child: Column(
-                      children: [
-                        const SizedBox(height: 20),
-                        FormCaloriesSection(
-                          food: _selectedFood!,
-                          mealSizeType: _mealSizeType,
-                          weightController: _weightController,
-                          amountController: _amountController,
-                          onChanged: (value) {
-                            setState(() {
-                              _mealSizeType = value;
-                            });
-                          },
-                        ),
-                        ElevatedButton(
-                          onPressed: () {
-                            if (_formKey.currentState!.validate()) {
-                              saveExtra();
-                            }
-                          },
-                          child: const Text('Tallenna'),
-                        ),
-                      ],
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    Form(
+                      key: _formKey,
+                      child: Column(
+                        children: [
+                          const SizedBox(height: 10),
+                          FormCaloriesSection(
+                            food: _selectedFood!,
+                            mealSizeType: _mealSizeType,
+                            weightController: _weightController,
+                            amountController: _amountController,
+                            onChanged: (value) {
+                              setState(() {
+                                _mealSizeType = value;
+                              });
+                            },
+                          ),
+                          ElevatedButton(
+                            onPressed: () {
+                              if (_formKey.currentState!.validate()) {
+                                saveExtra();
+                              }
+                            },
+                            child: const Text('Tallenna'),
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
     );

@@ -33,11 +33,12 @@ class FormCaloriesSection extends StatelessWidget {
                       : null,
                 ),
               ),
+              SizedBox(height: 12),
+              Text('Paino', style: TextStyle(fontSize: 18)),
               Row(
                 children: [
                   Expanded(
                     child: SwitchListTile(
-                      title: const Text('Paino'),
                       value: mealSizeType == 'Paino',
                       onChanged: (value) {
                         onChanged('Paino');
@@ -85,11 +86,12 @@ class FormCaloriesSection extends StatelessWidget {
                       : null,
                 ),
               ),
+              SizedBox(height: 12),
+              Text('Määrä', style: TextStyle(fontSize: 18)),
               Row(
                 children: [
                   Expanded(
                     child: SwitchListTile(
-                      title: const Text('Määrä'),
                       value: mealSizeType == 'Määrä',
                       onChanged: (value) {
                         onChanged('Määrä');
@@ -137,17 +139,17 @@ class FormCaloriesSection extends StatelessWidget {
                   ButtonSegment(
                     value: 'Pieni',
                     enabled: food.caloriesPerSize!['Pieni'] != null,
-                    label: const Text('Pieni'),
+                    label: Icon(Icons.circle, size: 16),
                   ),
                   ButtonSegment(
                     value: 'Normaali',
                     enabled: food.caloriesPerSize!['Normaali'] != null,
-                    label: const Text('Normaali'),
+                    label: Icon(Icons.circle, size: 22),
                   ),
                   ButtonSegment(
                     value: 'Iso',
                     enabled: food.caloriesPerSize!['Iso'] != null,
-                    label: const Text('Iso'),
+                    label: Icon(Icons.circle, size: 28),
                   ),
                 ],
                 selected: {mealSizeType},

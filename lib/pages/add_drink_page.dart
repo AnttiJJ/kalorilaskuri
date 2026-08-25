@@ -144,7 +144,7 @@ class _AddDrinkPageState extends State<AddDrinkPage> {
                   children: [
                     Expanded(
                       child: CheckboxListTile(
-                        title: const Text('Lasillinen'),
+                        title: const Text('Kpl'),
                         value: _hasPieceCal,
                         onChanged: (value) {
                           setState(() {
