@@ -38,11 +38,18 @@ class _CaloriesPageState extends State<CaloriesPage> {
             ],
           ),
         ),
-        body: TabBarView(
-          children: <Widget>[
-            CaloriesDailyWidget(),
-            Center(child: Text('Viikko')),
-            Center(child: Text('Kuukausi')),
+        body: Column(
+          children: [
+            Expanded(
+              child: TabBarView(
+                physics: const NeverScrollableScrollPhysics(),
+                children: <Widget>[
+                  CaloriesDailyWidget(),
+                  Center(child: Text('Viikko')),
+                  Center(child: Text('Kuukausi')),
+                ],
+              ),
+            ),
           ],
         ),
         floatingActionButton: FloatingActionButton(

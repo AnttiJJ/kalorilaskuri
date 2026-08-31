@@ -25,6 +25,7 @@ class _MealsPageState extends State<MealsPage> {
   List<Meal> _mealsExtras = [];
   Meal? _mealsDrink;
   bool deleteInProgress = false;
+  double offset = 0;
 
   @override
   void initState() {
@@ -208,165 +209,147 @@ class _MealsPageState extends State<MealsPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          DateBar(
-            onDateChanged: (newDate) {
-              setState(() {
-                _date = newDate;
-              });
-            },
-          ),
-          Expanded(
-            child: FutureBuilder<List<Meal>>(
-              future: sqfliteUtil.getMeals(_date),
-              builder: (context, snapshot) {
-                if (!snapshot.hasData || deleteInProgress) {
-                  return Center(child: const CircularProgressIndicator());
-                }
+      body: DateBar(
+        onDateChanged: (newDate) {
+          setState(() {
+            _date = newDate;
+          });
+        },
+        child: FutureBuilder<List<Meal>>(
+          future: sqfliteUtil.getMeals(_date),
+          builder: (context, snapshot) {
+            if (!snapshot.hasData || deleteInProgress) {
+              return Center(child: const CircularProgressIndicator());
+            }
 
-                final meals = snapshot.data!;
-                parentMeals = [];
-                extras = [];
+            final meals = snapshot.data!;
+            parentMeals = [];
+            extras = [];
 
-                for (final meal in meals) {
-                  if (meal.parentMealId != null) {
-                    extras.add(meal);
-                  } else {
-                    parentMeals.add(meal);
-                  }
-                }
+            for (final meal in meals) {
+              if (meal.parentMealId != null) {
+                extras.add(meal);
+              } else {
+                parentMeals.add(meal);
+              }
+            }
 
-                return ListView.builder(
-                  itemCount: parentMeals.length,
-                  itemBuilder: (context, index) {
-                    return Card(
-                      child: InkWell(
-                        onTap: () {
-                          setState(() {
-                            setMealsExtras(parentMeals[index].id!);
-                            if (_expandedMeal != index) {
-                              _expandedMeal = index;
-                            } else {
-                              _expandedMeal = -1;
-                            }
-                          });
-                        },
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            ListTile(
-                              title: Text(parentMeals[index].name),
-                              leading: parentMeals[index].icon,
-                              trailing: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  IconButton(
-                                    onPressed: () async {
-                                      await updateMeal(parentMeals[index]);
-                                    },
-                                    icon: Icon(Icons.mode, color: Colors.blue),
-                                  ),
-                                  IconButton(
-                                    onPressed: () => deleteMealDialog(
-                                      parentMeals[index].id!,
-                                      parentMeals[index].name,
-                                      parentMeals[index].calories,
-                                      parentMeals[index].type,
-                                      DateTime.parse(
-                                        parentMeals[index].createdAt,
-                                      ),
-                                    ),
-                                    icon: Icon(Icons.delete, color: Colors.red),
-                                  ),
-                                ],
+            return ListView.builder(
+              itemCount: parentMeals.length,
+              itemBuilder: (context, index) {
+                return Card(
+                  child: InkWell(
+                    onTap: () {
+                      setState(() {
+                        setMealsExtras(parentMeals[index].id!);
+                        if (_expandedMeal != index) {
+                          _expandedMeal = index;
+                        } else {
+                          _expandedMeal = -1;
+                        }
+                      });
+                    },
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        ListTile(
+                          title: Text(parentMeals[index].name),
+                          leading: parentMeals[index].icon,
+                          trailing: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              IconButton(
+                                onPressed: () async {
+                                  await updateMeal(parentMeals[index]);
+                                },
+                                icon: Icon(Icons.mode, color: Colors.blue),
                               ),
-                              subtitle: Row(
-                                children: [
-                                  Expanded(
-                                    child: Text(
-                                      totalMealCalories(parentMeals[index]) !=
-                                              parentMeals[index].calories
-                                          ? '${totalMealCalories(parentMeals[index])} (${parentMeals[index].calories.toString()}) kcal'
-                                          : '${parentMeals[index].calories.toString()} kcal',
-                                    ),
-                                  ),
-                                  Expanded(
-                                    child: Text(parentMeals[index].mealSize),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            if (_expandedMeal == index &&
-                                (_mealsExtras.isNotEmpty ||
-                                    _mealsDrink != null))
-                              Padding(
-                                padding: EdgeInsetsGeometry.fromLTRB(
-                                  57,
-                                  0,
-                                  16,
-                                  16,
+                              IconButton(
+                                onPressed: () => deleteMealDialog(
+                                  parentMeals[index].id!,
+                                  parentMeals[index].name,
+                                  parentMeals[index].calories,
+                                  parentMeals[index].type,
+                                  DateTime.parse(parentMeals[index].createdAt),
                                 ),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    if (_mealsExtras.isNotEmpty)
-                                      Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text('Lisukkeet:'),
-                                          for (final extra in _mealsExtras)
-                                            Row(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment
-                                                      .spaceBetween,
-                                              children: [
-                                                Text(
-                                                  '${extra.name} ${extra.mealSizeShort}',
-                                                ),
-                                                Text('${extra.calories} kcal'),
-                                              ],
-                                            ),
-
-                                          SizedBox(height: 5),
-                                        ],
-                                      ),
-
-                                    if (_mealsDrink != null)
-                                      Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Text('Juoma:'),
-                                          Row(
-                                            mainAxisAlignment:
-                                                MainAxisAlignment.spaceBetween,
-                                            children: [
-                                              Text(
-                                                '${_mealsDrink!.name} ${_mealsDrink!.mealSizeShort}',
-                                              ),
-                                              Text(
-                                                '${_mealsDrink!.calories} kcal',
-                                              ),
-                                            ],
-                                          ),
-                                        ],
-                                      ),
-                                  ],
+                                icon: Icon(Icons.delete, color: Colors.red),
+                              ),
+                            ],
+                          ),
+                          subtitle: Row(
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  totalMealCalories(parentMeals[index]) !=
+                                          parentMeals[index].calories
+                                      ? '${totalMealCalories(parentMeals[index])} (${parentMeals[index].calories.toString()}) kcal'
+                                      : '${parentMeals[index].calories.toString()} kcal',
                                 ),
                               ),
-                          ],
+                              Expanded(
+                                child: Text(parentMeals[index].mealSize),
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
-                    );
-                  },
+                        if (_expandedMeal == index &&
+                            (_mealsExtras.isNotEmpty || _mealsDrink != null))
+                          Padding(
+                            padding: EdgeInsetsGeometry.fromLTRB(57, 0, 16, 16),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                if (_mealsExtras.isNotEmpty)
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text('Lisukkeet:'),
+                                      for (final extra in _mealsExtras)
+                                        Row(
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            Text(
+                                              '${extra.name} ${extra.mealSizeShort}',
+                                            ),
+                                            Text('${extra.calories} kcal'),
+                                          ],
+                                        ),
+
+                                      SizedBox(height: 5),
+                                    ],
+                                  ),
+
+                                if (_mealsDrink != null)
+                                  Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text('Juoma:'),
+                                      Row(
+                                        mainAxisAlignment:
+                                            MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text(
+                                            '${_mealsDrink!.name} ${_mealsDrink!.mealSizeShort}',
+                                          ),
+                                          Text('${_mealsDrink!.calories} kcal'),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                              ],
+                            ),
+                          ),
+                      ],
+                    ),
+                  ),
                 );
               },
-            ),
-          ),
-        ],
+            );
+          },
+        ),
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () => newMealDialog(),
