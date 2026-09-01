@@ -26,4 +26,8 @@ final appTheme = ThemeData(
   floatingActionButtonTheme: FloatingActionButtonThemeData(
     backgroundColor: colorScheme.inversePrimary,
   ),
+
+  inputDecorationTheme: InputDecorationThemeData(
+    counterStyle: TextStyle(fontSize: 0, height: 0),
+  ),
 );
